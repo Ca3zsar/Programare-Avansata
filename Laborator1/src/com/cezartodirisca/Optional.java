@@ -36,6 +36,7 @@ public class Optional {
                 DFS(i,adjacency,n,comp);
                 comp++;
             }
+            System.out.print('\n');
         }
         if(comp == 2)
         {
@@ -49,7 +50,7 @@ public class Optional {
 
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
-        System.out.println(totalTime);
+        System.out.println(totalTime + "nanoseconds");
     }
 
     public static int[][] generateMatrix(int n)
@@ -118,6 +119,7 @@ public class Optional {
     }
     public static void DFS(int x,int [][]adjacency,int n, int comp)
     {
+        System.out.print(x + " ");
         visited[x]=comp;
         for(int j=0;j<n;j++)
         {
