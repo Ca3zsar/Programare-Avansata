@@ -1,6 +1,10 @@
 package com.cezartodirisca;
 
 public class Problem {
+    /*
+    Final modifier is used because none of the members
+    can't be modified after the initialization.
+     */
     private final int sourceNumber;
     private final int destinationNumber;
 
@@ -8,8 +12,8 @@ public class Problem {
     private final Destination[] destinations;
 
     private final int[][] costs;
-    private int totalCost;
 
+    // Initialize the problem using the sources, the destinations and the costs.
     public Problem(int newSourceNr, int newDestNr, Source[] newSources, Destination[] newDest, int[][] newCosts) {
         this.sourceNumber = newSourceNr;
         this.destinationNumber = newDestNr;
@@ -29,6 +33,12 @@ public class Problem {
 
     @Override
     public String toString() {
+        /**
+         * Display the instance of the problem the way it is
+         * displayed in the example from the laboratory.
+         */
+
+        // lines will hold the table that will be displayed
         StringBuilder lines = new StringBuilder();
 
         for (int i = 0; i < 6; i++) lines.append(" ");

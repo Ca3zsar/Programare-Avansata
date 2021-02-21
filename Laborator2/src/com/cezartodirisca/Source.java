@@ -5,6 +5,7 @@ public class Source {
     private String name;
     private int supply;
 
+    // Initialize the Source using the constructor
     public Source(SourceType newType, String newName, int newSupply) {
         this.type = newType;
         this.name = newName;
@@ -35,6 +36,7 @@ public class Source {
         this.supply = newSupply;
     }
 
+    // Override the toString method to display the type of the source and its name
     @Override
     public String toString() {
         String printType = switch (this.type) {

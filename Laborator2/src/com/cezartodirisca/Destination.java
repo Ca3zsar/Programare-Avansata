@@ -4,6 +4,7 @@ public class Destination {
     private String name;
     private int demand;
 
+    // Initialize the Destination using Constructor
     public Destination(String newName, int newDemand) {
         this.name = newName;
         this.demand = newDemand;
@@ -25,6 +26,7 @@ public class Destination {
         this.demand = demand;
     }
 
+    // Use of the toString method to display the name of the destination.
     @Override
     public String toString() {
         return "The name of the destination is " + this.name + ".";
