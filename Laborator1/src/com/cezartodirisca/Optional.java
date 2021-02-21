@@ -22,7 +22,7 @@ public class Optional {
 
         int adjacency[][];
         adjacency = generateMatrix(n);
-        drawMatrix(adjacency,n);
+//        drawMatrix(adjacency,n);
 
         //Check if connected.;
         visited = new int[n];
@@ -43,14 +43,14 @@ public class Optional {
             System.out.println("The graph is connected");
             System.out.println("The adjacency matrix of the spanning tree is : \n");
 
-            drawMatrix(treeMatrix,n);
+//            drawMatrix(treeMatrix,n);
         }else{
             System.out.println("The graph is not connected");
         }
 
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
-        System.out.println(totalTime + "nanoseconds");
+        System.out.println(totalTime + " nanoseconds");
     }
 
     public static int[][] generateMatrix(int n)

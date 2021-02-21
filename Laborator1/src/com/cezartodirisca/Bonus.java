@@ -4,8 +4,8 @@ public class Bonus {
     static int currentNode = 0;
     public static void main(String[] args)
     {
-        int maxLevels = 4;
-        int maxChildren = 4;
+        int maxLevels = Integer.parseInt(args[0]);
+        int maxChildren = Integer.parseInt(args[1]);
         generateTree(0, maxLevels, maxChildren);
     }
 
