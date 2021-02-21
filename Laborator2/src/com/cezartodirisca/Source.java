@@ -37,17 +37,10 @@ public class Source {
 
     @Override
     public String toString() {
-        String printType;
-        switch (this.type) {
-            case FACTORY:
-                printType = "Factory";
-                break;
-            case WAREHOUSE:
-                printType = "Warehouse";
-                break;
-            default:
-                printType = "Construction";
-        }
+        String printType = switch (this.type) {
+            case FACTORY -> "Factory";
+            case WAREHOUSE -> "Warehouse";
+        };
         return "This is a " + printType + " with the name : " + name + ".";
     }
 }
