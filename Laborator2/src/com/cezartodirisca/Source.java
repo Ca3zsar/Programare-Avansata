@@ -41,8 +41,10 @@ public class Source {
         switch (this.type) {
             case FACTORY:
                 printType = "Factory";
+                break;
             case WAREHOUSE:
                 printType = "Warehouse";
+                break;
             default:
                 printType = "Construction";
         }
