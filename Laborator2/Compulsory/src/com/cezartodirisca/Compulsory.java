@@ -15,16 +15,16 @@ public class Compulsory {
 		System.out.println(Arrays.toString(sources));
 
 		// Initialize the destinations from the example.
-	    Destination[] dests = new Destination[3];
-	    dests[0] = new Destination("D1",20);
-	    dests[1] = new Destination("D2",25);
-	    dests[2] = new Destination("D3",25);
+	    Destination[] destinations = new Destination[3];
+	    destinations[0] = new Destination("D1",20);
+	    destinations[1] = new Destination("D2",25);
+	    destinations[2] = new Destination("D3",25);
 
 	    // Illustrate the use of toString method of Destination
-		System.out.println(Arrays.toString(dests));
+		System.out.println(Arrays.toString(destinations));
 
 	    int sourceNumber = sources.length;
-	    int destinationNumber = dests.length;
+	    int destinationNumber = destinations.length;
 
 	    // The costs from the example
 	    int[][] costs = {
@@ -34,7 +34,7 @@ public class Compulsory {
 	                    };
 
 	    // Initialize the problem using the sources, the destinations and the costs.
-	    Problem problem = new Problem(sourceNumber, destinationNumber, sources, dests, costs);
+	    Problem problem = new Problem(sourceNumber, destinationNumber, sources, destinations, costs);
 
 	    // Illustrate the use of toString method of Problem
 		System.out.println(problem.toString());

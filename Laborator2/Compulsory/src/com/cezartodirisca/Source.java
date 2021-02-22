@@ -39,10 +39,7 @@ public class Source {
     // Override the toString method to display the type of the source and its name
     @Override
     public String toString() {
-        String printType = switch (this.type) {
-            case FACTORY -> "Factory";
-            case WAREHOUSE -> "Warehouse";
-        };
+        String printType = this.type.label;
         return "This is a " + printType + " with the name : " + name + ".";
     }
 }

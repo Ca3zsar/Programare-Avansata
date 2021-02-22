@@ -14,11 +14,11 @@ public class Problem {
     private final int[][] costs;
 
     // Initialize the problem using the sources, the destinations and the costs.
-    public Problem(int newSourceNr, int newDestNr, Source[] newSources, Destination[] newDest, int[][] newCosts) {
+    public Problem(int newSourceNr, int newDestNr, Source[] newSources, Destination[] newDestinations, int[][] newCosts) {
         this.sourceNumber = newSourceNr;
         this.destinationNumber = newDestNr;
         this.sources = newSources.clone();
-        this.destinations = newDest.clone();
+        this.destinations = newDestinations.clone();
         this.costs = newCosts.clone();
     }
 
@@ -31,17 +31,17 @@ public class Problem {
         }
     }
 
+    /**
+     * Display the instance of the problem the way it is
+     * displayed in the example from the laboratory.
+     */
     @Override
     public String toString() {
-        /**
-         * Display the instance of the problem the way it is
-         * displayed in the example from the laboratory.
-         */
 
         // lines will hold the table that will be displayed
         StringBuilder lines = new StringBuilder();
 
-        for (int i = 0; i < 6; i++) lines.append(" ");
+        lines.append(" ".repeat(6));
         lines.append("|");
 
         for (int i = 0; i < destinationNumber; i++) {
