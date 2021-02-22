@@ -2,7 +2,6 @@ package com.cezartodirisca;
 
 public class Factory extends Source{
     /**
-     *
      * @param newName the name of the factory
      * @param newSupply the quantity of units the factory can supply
      */
