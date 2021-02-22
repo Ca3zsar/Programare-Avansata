@@ -4,7 +4,11 @@ public class Destination {
     private String name;
     private int demand;
 
-    // Initialize the Destination using Constructor
+    /**
+     *
+     * @param newName the name of the destination
+     * @param newDemand the number of units the destination demands
+     */
     public Destination(String newName, int newDemand) {
         this.name = newName;
         this.demand = newDemand;

@@ -38,6 +38,9 @@ public class Optional {
 
         // Illustrate the use of toString method of Problem
         System.out.println(problem.toString());
+
+        problem.solveProblem();
+        System.out.println(problem.getSolution());
     }
 
 

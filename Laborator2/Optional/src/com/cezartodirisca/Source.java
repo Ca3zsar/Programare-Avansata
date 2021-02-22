@@ -1,10 +1,9 @@
 package com.cezartodirisca;
 
+
 public abstract class Source {
     protected String name;
     protected int supply;
-
-    // Initialize the Source using the constructor
 
     public String getName() {
         return this.name;
