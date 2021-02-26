@@ -1,43 +1,46 @@
 package com.cezartodirisca;
 
-import java.util.Arrays;
-
 public class Bonus {
 
     public static void main(String[] args) {
-        // Initialize the sources from the example
-        Source[] sources = new Source[3];
-        sources[0] = new Factory("S1", 10);
-        sources[1] = new Warehouse("S2", 35);
-        sources[2] = new Warehouse("S3", 25);
+        int minimum=10, maximum=100;
 
-        // Illustrate the use of toString method of Source
-        System.out.println(Arrays.toString(sources));
+        // Initialize the sources with random values between minimum and maximum
+        Source[] sources = new Source[1000];
+        for(int i=0;i<1000;i++)
+        {
+            int randomValue = (int)(Math.random() * (maximum - minimum + 1) + minimum);
+            sources[i] = new Factory("S" + i,randomValue);
+        }
 
-        // Initialize the destinations from the example.
-        Destination[] dests = new Destination[3];
-        dests[0] = new Destination("D1",20);
-        dests[1] = new Destination("D2",25);
-        dests[2] = new Destination("D3",25);
 
-        // Illustrate the use of toString method of Destination
-        System.out.println(Arrays.toString(dests));
+        // Initialize the destinations.
+        Destination[] destinations = new Destination[1000];
+        for(int i=0;i<1000;i++)
+        {
+            int randomValue = (int)(Math.random() * (maximum - minimum + 1) + minimum);
+            destinations[i] = new Destination("D" + i,randomValue);
+        }
 
         int sourceNumber = sources.length;
-        int destinationNumber = dests.length;
+        int destinationNumber = destinations.length;
 
-        // The costs from the example
-        int[][] costs = {
-                {2, 3, 1},
-                {5, 4, 8},
-                {5, 6, 8}
-        };
+        // The costs
+        int[][] costs = new int[sourceNumber][destinationNumber];
+        minimum = 1;
+        maximum = 20;
+
+        for(int i=0;i<sourceNumber;i++)
+        {
+            for(int j=0;j<destinationNumber;j++)
+            {
+                int randomValue = (int)(Math.random() * (maximum - minimum + 1) + minimum);
+                costs[i][j] = randomValue;
+            }
+        }
 
         // Initialize the problem using the sources, the destinations and the costs.
-        Problem problem = new Problem(sourceNumber, destinationNumber, sources, dests, costs);
-
-        // Illustrate the use of toString method of Problem
-        System.out.println(problem.toString());
+        Problem problem = new Problem(sourceNumber, destinationNumber, sources, destinations, costs);
 
         problem.solveProblem();
         System.out.println(problem.getSolution());
