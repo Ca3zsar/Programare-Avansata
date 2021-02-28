@@ -3,18 +3,18 @@ package com.cezartodirisca;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Location implements Comparable{
+public abstract class Location implements Comparable {
     String name;
     Map<String, Integer> costs;
 
-    public Location(String newName)
-    {
+    public Location(String newName) {
         this.name = newName;
         costs = new HashMap<>();
     }
 
     /**
      * Compares a location with another location based on their name
+     *
      * @param other The location to compare to.
      */
     @Override
@@ -27,23 +27,26 @@ public abstract class Location implements Comparable{
         return this.name.compareTo(newLocation.name);
     }
 
-    public String getName()
+    @Override
+    public String toString()
     {
+        return "The name of this location is : " + this.name + "\n";
+    }
+
+    public String getName() {
         return this.name;
     }
 
-    public void setDistance(String newLocation, Integer cost)
-    {
-        this.costs.put(newLocation,cost);
+    public void setDistance(String newLocation, Integer cost) {
+        this.costs.put(newLocation, cost);
     }
 
-    public Integer getDistance(String requiredLocation)
-    {
+    public Integer getDistance(String requiredLocation) {
         return this.costs.get(requiredLocation);
     }
 
-    public Map<String,Integer> getAllDistances()
-    {
+    public Map<String, Integer> getAllDistances() {
         return this.costs;
     }
+
 }

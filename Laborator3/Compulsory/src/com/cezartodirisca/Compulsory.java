@@ -1,6 +1,6 @@
 package com.cezartodirisca;
 
-public class Main {
+public class Compulsory {
 
     public static void main(String[] args) {
         // Initialize the locations from the example
