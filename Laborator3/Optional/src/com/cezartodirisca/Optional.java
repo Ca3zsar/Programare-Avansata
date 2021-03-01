@@ -36,5 +36,8 @@ public class Optional {
 
         ((Visitable)locations[5]).setDefaultHours();
         System.out.println(Visitable.getVisitingHours((Visitable) locations[5]));
+
+        TravelPlan testTravel = new TravelPlan(initialCity,new int[]{0,1,2,3,4,5});
+        System.out.println(testTravel.computeShortestPath(locations[0],locations[2]));
     }
 }
