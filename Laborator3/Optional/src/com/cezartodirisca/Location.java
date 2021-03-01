@@ -1,5 +1,6 @@
 package com.cezartodirisca;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +20,12 @@ public abstract class Location implements Comparable {
      */
     @Override
     public int compareTo(Object other) {
-        if (other == null)
+        if (other == null) {
             throw new NullPointerException();
-        if (!(other instanceof Location))
+        }
+        if (!(other instanceof Location)) {
             throw new ClassCastException("Incomparable objects!");
+        }
         Location newLocation = (Location) other;
         return this.name.compareTo(newLocation.name);
     }

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class City {
     private final String name;
-    private final List<Location> locations;
+    private final ArrayList<Location> locations;
 
     /**
      * @param newName      The name of the city
@@ -14,9 +14,9 @@ public class City {
      *                     if there is any modification of the list outside the class, it should
      *                     happen in the City class too.
      */
-    public City(String newName, Location[] newLocations) {
+    public City(String newName, ArrayList<Location> newLocations) {
         this.name = newName;
-        this.locations = Arrays.asList(newLocations.clone());
+        this.locations = (ArrayList<Location>) newLocations.clone();
     }
 
     static private int sortByOpeningHour(Location firstLocation, Location secondLocation) {
