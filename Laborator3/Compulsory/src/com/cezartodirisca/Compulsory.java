@@ -15,6 +15,7 @@ public class Compulsory {
         locations[1].setDistance("v5",10);
 
         locations[2] = new Museum("v3",9,16,10);
+        locations[2].setDistance("v2",20);
         locations[2].setDistance("v4",20);
 
         locations[3] = new Church("v4",7,13);
@@ -22,6 +23,7 @@ public class Compulsory {
         locations[3].setDistance("v6",10);
 
         locations[4] = new Church("v5",7,12);
+        locations[4].setDistance("v4",30);
         locations[4].setDistance("v6",20);
 
         locations[5] = new Restaurant("v6",4,8,20);

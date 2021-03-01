@@ -1,15 +1,24 @@
 package com.cezartodirisca;
 
+import java.time.LocalTime;
+
 public class Restaurant extends Location implements Classifiable,Visitable{
     private int rank;
-    private int startTime, closeTime;
+    private LocalTime startTime, closeTime;
 
-    public Restaurant(String newName, int newRank, int startTime, int closeTime)
+    public Restaurant(String newName, int newRank, LocalTime startTime, LocalTime closeTime)
     {
         super(newName);
         this.rank = newRank;
         this.startTime = startTime;
         this.closeTime = closeTime;
+    }
+
+    public Restaurant(String newName,int newRank)
+    {
+        super(newName);
+        this.rank = newRank;
+        setDefaultHours();
     }
 
     @Override
@@ -25,22 +34,22 @@ public class Restaurant extends Location implements Classifiable,Visitable{
     }
 
     @Override
-    public void setStartTime(int newStartTime) {
+    public void setStartTime(LocalTime newStartTime) {
         this.startTime = newStartTime;
     }
 
     @Override
-    public void setCloseTime(int newCloseTime) {
+    public void setCloseTime(LocalTime newCloseTime) {
         this.closeTime = newCloseTime;
     }
 
     @Override
-    public int getStartTime() {
+    public LocalTime getStartTime() {
         return this.startTime;
     }
 
     @Override
-    public int getCloseTime() {
+    public LocalTime getCloseTime() {
         return this.closeTime;
     }
 }

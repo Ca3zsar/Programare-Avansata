@@ -31,11 +31,16 @@ public class City{
         locations.add(newLocation);
     }
 
+    public List<Location> getLocationList()
+    {
+        return locations;
+    }
+
     static private int sortByOpeningHour(Location firstLocation, Location secondLocation)
     {
         Visitable firstVisitable = (Visitable) firstLocation;
         Visitable secondVisitable = (Visitable) secondLocation;
-        return firstVisitable.getStartTime() - secondVisitable.getStartTime();
+        return firstVisitable.getStartTime().compareTo(secondVisitable.getStartTime());
     }
 
     /**
@@ -44,11 +49,11 @@ public class City{
     public void displayVisitable()
     {
         List<Location>notPayableButVisitable = locations.stream().
-            filter(location -> (!(location instanceof Payable))).
-                filter(location -> location instanceof Visitable).
-                sorted(City::sortByOpeningHour).
-                collect(Collectors.toList());
-        System.out.println(notPayableButVisitable.toString());
+            filter(location -> (!(location instanceof Payable))). // Filter the locations that are Payable
+                filter(location -> location instanceof Visitable). // Select the ones that are Visitable
+                sorted(City::sortByOpeningHour). // Sort them using the sortByOpeningHour callback function
+                collect(Collectors.toList()); // Transform it in a List.
+        System.out.println(notPayableButVisitable.toString()); // Print them
     }
 
     /**

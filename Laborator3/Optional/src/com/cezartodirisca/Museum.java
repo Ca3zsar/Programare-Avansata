@@ -1,10 +1,12 @@
 package com.cezartodirisca;
 
+import java.time.LocalTime;
+
 public class Museum extends Location implements Visitable,Payable{
-    private int startTime, closeTime;
+    private LocalTime startTime, closeTime;
     private int entryFee;
 
-    public Museum(String newName,int startTime, int closeTime,int entryFee)
+    public Museum(String newName,LocalTime startTime, LocalTime closeTime,int entryFee)
     {
         super(newName);
         this.startTime = startTime;
@@ -12,23 +14,30 @@ public class Museum extends Location implements Visitable,Payable{
         this.entryFee = entryFee;
     }
 
+    public Museum(String newName,int entryFee)
+    {
+        super(newName);
+        this.entryFee = entryFee;
+        setDefaultHours();
+    }
+
     @Override
-    public void setStartTime(int newStartTime) {
+    public void setStartTime(LocalTime newStartTime) {
         this.startTime = newStartTime;
     }
 
     @Override
-    public void setCloseTime(int newCloseTime) {
+    public void setCloseTime(LocalTime newCloseTime) {
         this.closeTime = newCloseTime;
     }
 
     @Override
-    public int getStartTime() {
+    public LocalTime getStartTime() {
         return this.startTime;
     }
 
     @Override
-    public int getCloseTime() {
+    public LocalTime getCloseTime() {
         return this.closeTime;
     }
 
