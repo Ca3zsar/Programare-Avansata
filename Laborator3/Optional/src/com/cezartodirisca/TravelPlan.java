@@ -71,6 +71,26 @@ public class TravelPlan {
             }
         }
 
+        String currentLocation = secondLocation.getName();
+        StringBuilder path = new StringBuilder();
+
+        while(!currentLocation.equals(parents.get(currentLocation)))
+        {
+            StringBuilder temporaryToAdd = new StringBuilder();
+            temporaryToAdd.append(currentLocation);
+
+            path.append(temporaryToAdd.reverse()).append(" >- ");
+            currentLocation = parents.get(currentLocation);
+        }
+
+        StringBuilder temporaryToAdd = new StringBuilder();
+        temporaryToAdd.append(firstLocation.getName());
+
+        path.append(temporaryToAdd.reverse());
+
+        path = path.reverse();
+        System.out.println(path.toString());
+
         return distances.get(secondLocation.getName());
     }
 }

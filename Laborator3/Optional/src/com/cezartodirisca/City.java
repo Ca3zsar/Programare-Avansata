@@ -3,53 +3,46 @@ package com.cezartodirisca;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class City{
+public class City {
     private final String name;
     private final List<Location> locations;
 
     /**
-     *
-     * @param newName The name of the city
+     * @param newName      The name of the city
      * @param newLocations A List of locations in the city
-     * A shallow copy of the list of the locations will be used because
-     * if there is any modification of the list outside the class, it should
-     * happen in the City class too.
+     *                     A shallow copy of the list of the locations will be used because
+     *                     if there is any modification of the list outside the class, it should
+     *                     happen in the City class too.
      */
-    public City(String newName, Location[] newLocations)
-    {
-        this.name=newName;
+    public City(String newName, Location[] newLocations) {
+        this.name = newName;
         this.locations = Arrays.asList(newLocations.clone());
     }
 
-    public String getName()
-    {
-        return this.name;
-    }
-
-    public void addNewLocation(Location newLocation)
-    {
-        locations.add(newLocation);
-    }
-
-    public List<Location> getLocationList()
-    {
-        return locations;
-    }
-
-    static private int sortByOpeningHour(Location firstLocation, Location secondLocation)
-    {
+    static private int sortByOpeningHour(Location firstLocation, Location secondLocation) {
         Visitable firstVisitable = (Visitable) firstLocation;
         Visitable secondVisitable = (Visitable) secondLocation;
         return firstVisitable.getStartTime().compareTo(secondVisitable.getStartTime());
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public void addNewLocation(Location newLocation) {
+        locations.add(newLocation);
+    }
+
+    public List<Location> getLocationList() {
+        return locations;
+    }
+
     /**
      * Display the Visitable locations that are not Payable.
      */
-    public void displayVisitable()
-    {
-        List<Location>notPayableButVisitable = locations.stream().
-            filter(location -> (!(location instanceof Payable))). // Filter the locations that are Payable
+    public void displayVisitable() {
+        List<Location> notPayableButVisitable = locations.stream().
+                filter(location -> (!(location instanceof Payable))). // Filter the locations that are Payable
                 filter(location -> location instanceof Visitable). // Select the ones that are Visitable
                 sorted(City::sortByOpeningHour). // Sort them using the sortByOpeningHour callback function
                 collect(Collectors.toList()); // Transform it in a List.
@@ -65,14 +58,12 @@ public class City{
         toShowTable.append("From-To\t\tCost\n");
 
         // Iterate through all the locations in the city
-        for(Location temporaryLocation:this.locations)
-        {
-            Map<String,Integer> temporaryMap;
+        for (Location temporaryLocation : this.locations) {
+            Map<String, Integer> temporaryMap;
             temporaryMap = temporaryLocation.getAllDistances();
 
             // Get the costs of every path starting from that city
-            for(Map.Entry<String,Integer> entry: temporaryMap.entrySet())
-            {
+            for (Map.Entry<String, Integer> entry : temporaryMap.entrySet()) {
                 toShowTable.append(temporaryLocation.getName()).
                         append(" -> ").
                         append(entry.getKey()).

@@ -6,7 +6,10 @@ import java.time.LocalTime;
 public interface Visitable extends Comparable{
     void setStartTime(LocalTime newStartTime);
     void setCloseTime(LocalTime newCloseTime);
-    LocalTime getStartTime();
+    default LocalTime getStartTime()
+    {
+        return LocalTime.now();
+    }
     LocalTime getCloseTime();
 
     default void setDefaultHours()
