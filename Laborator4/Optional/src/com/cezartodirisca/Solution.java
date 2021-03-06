@@ -3,7 +3,7 @@ package com.cezartodirisca;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Solution {
+public class Solution{
     private Map<String,String> matching;
 
     public Solution() {
@@ -13,6 +13,11 @@ public class Solution {
     public void addToSolution(String student, String school)
     {
         this.matching.put(student,school);
+    }
+
+    public Map<String,String>getSolution()
+    {
+        return this.matching;
     }
 
     @Override
