@@ -6,15 +6,21 @@ import java.util.List;
 public class Student {
     private final String name;
     private List<String> preferences;
+    private double score;
 
-    public Student(String newName, ArrayList<String> newPreferences) {
+    public Student(String newName, ArrayList<String> newPreferences,double newScore) {
         this.name = newName;
         this.preferences = new ArrayList<>();
         this.preferences = newPreferences;
+        this.score = newScore;
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public double getScore() {
+        return score;
     }
 
     public List<String> getPreferences() {
@@ -26,6 +32,7 @@ public class Student {
         return "Student{" +
                 "name='" + name + '\'' +
                 ", preferences=" + preferences +
-                '}';
+                ", score=" + score +
+                "}\n";
     }
 }

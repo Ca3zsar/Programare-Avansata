@@ -23,6 +23,10 @@ public class School implements Comparable<School> {
         return this.preferences;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
     @Override
     public int compareTo(School secondSchool) {
         return this.name.compareTo(secondSchool.getName());
@@ -34,6 +38,6 @@ public class School implements Comparable<School> {
                 "name='" + name + '\'' +
                 ", preferences=" + preferences +
                 ", capacity=" + capacity +
-                '}';
+                "}\n";
     }
 }
