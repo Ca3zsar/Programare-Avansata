@@ -87,7 +87,13 @@ public class Problem {
             }
         }
 
-
+        for(Map.Entry<School,ArrayList<Student>>entry :  schoolAdmission.entrySet())
+        {
+            for(Student student : entry.getValue())
+            {
+                problemSolution.addToSolution(student.getName(),entry.getKey().getName());
+            }
+        }
 
         return problemSolution;
     }

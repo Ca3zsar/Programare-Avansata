@@ -10,10 +10,10 @@ public class Bonus {
 
         // Declare the objects from the example
 	    List<Student> students = Stream.of(
-	            new Student("S1", new ArrayList<>(Arrays.asList("H0","H1","H2"))),
-                new Student("S2", new ArrayList<>(Arrays.asList("H0","H1","H2"))),
-                new Student("S3", new ArrayList<>(Arrays.asList("H0","H1"))),
-                new Student("S4", new ArrayList<>(Arrays.asList("H0","H2")))
+	            new Student("S0", new ArrayList<>(Arrays.asList("H0","H1","H2"))),
+                new Student("S1", new ArrayList<>(Arrays.asList("H0","H1","H2"))),
+                new Student("S2", new ArrayList<>(Arrays.asList("H0","H1"))),
+                new Student("S3", new ArrayList<>(Arrays.asList("H0","H2")))
         ).collect(Collectors.toList());
 
 	    List<School> highSchools = Stream.of(
