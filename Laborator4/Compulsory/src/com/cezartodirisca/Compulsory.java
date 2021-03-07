@@ -26,22 +26,20 @@ public class Compulsory {
 
         // Create a linkedList of students and sort them by name
         List<Student> linkedStudents = new LinkedList<>();
-        linkedStudents.add(students.get(2));
-        linkedStudents.add(students.get(1));
-        linkedStudents.add(students.get(3));
-        linkedStudents.add(students.get(0));
+        linkedStudents.addAll(students);
 
         System.out.println("--------------------");
+        Collections.shuffle(linkedStudents);
         System.out.println(linkedStudents); // Before the sorting
-        linkedStudents.sort(new SortByStudentName());
+
+        linkedStudents = linkedStudents.stream().sorted(Comparator.comparing(Student::getName)).collect(Collectors.toList());
+//        linkedStudents.sort(new SortByStudentName());
+
         System.out.println(linkedStudents); // After sorting
         System.out.println("--------------------");
 
         Set<School> schoolSet = new TreeSet<>();
-        schoolSet.add(highSchools.get(2));
-        schoolSet.add(highSchools.get(0));
-        schoolSet.add(highSchools.get(1));
-
+        schoolSet.addAll(highSchools);
         System.out.println(schoolSet);
 
         //A HashMap describing the students
@@ -50,6 +48,7 @@ public class Compulsory {
         {
             describeStudents.put(temporaryStudent.getName(),temporaryStudent.getPreferences());
         }
+
         // Print the student preferences
         System.out.println();
         System.out.println("Students preferences");

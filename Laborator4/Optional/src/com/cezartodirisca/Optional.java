@@ -41,13 +41,9 @@ public class Optional {
 
         System.out.println("-----");
 
-
-
         //Query to display the students who find acceptable a given list of schools
         List<String>toVerifySchools = new ArrayList<>();
-        toVerifySchools.add(schoolName.get(0));
-        toVerifySchools.add(schoolName.get(2));
-        toVerifySchools.add(schoolName.get(1));
+        toVerifySchools.addAll(schoolName);
 
         students.stream().
                 filter(student -> student.getPreferences().containsAll(toVerifySchools)).
