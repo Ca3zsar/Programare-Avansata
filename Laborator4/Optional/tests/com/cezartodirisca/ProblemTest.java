@@ -63,7 +63,7 @@ public class ProblemTest {
         falseSolution.addToSolution("Matei","UMF Iasi"); // There is the wrong one
         falseSolution.addToSolution("Otilia","UBB");
 
-        assertEquals(falseSolution.getSolution(),toSolve.solveProblem().getSolution());
+        assertNotEquals(falseSolution.getSolution(),toSolve.solveProblem().getSolution());
 
     }
 }

@@ -1,15 +1,13 @@
 package com.cezartodirisca;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
     private final String name;
     private List<String> preferences;
 
-    public Student(String newName, ArrayList<String> newPreferences) {
+    public Student(String newName, List<String> newPreferences) {
         this.name = newName;
-        this.preferences = new ArrayList<>();
         this.preferences = newPreferences;
     }
 

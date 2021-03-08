@@ -25,8 +25,7 @@ public class Compulsory {
         System.out.println(highSchools);
 
         // Create a linkedList of students and sort them by name
-        List<Student> linkedStudents = new LinkedList<>();
-        linkedStudents.addAll(students);
+        List<Student> linkedStudents = new LinkedList<>(students);
 
         System.out.println("--------------------");
         Collections.shuffle(linkedStudents);
@@ -38,8 +37,7 @@ public class Compulsory {
         System.out.println(linkedStudents); // After sorting
         System.out.println("--------------------");
 
-        Set<School> schoolSet = new TreeSet<>();
-        schoolSet.addAll(highSchools);
+        Set<School> schoolSet = new TreeSet<>(highSchools);
         System.out.println(schoolSet);
 
         //A HashMap describing the students

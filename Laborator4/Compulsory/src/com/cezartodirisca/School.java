@@ -1,6 +1,5 @@
 package com.cezartodirisca;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class School implements Comparable<School> {
@@ -8,9 +7,8 @@ public class School implements Comparable<School> {
     private List<String> preferences;
     private final int capacity;
 
-    public School(String newName, ArrayList<String> newPreferences,int newCapacity) {
+    public School(String newName, List<String> newPreferences,int newCapacity) {
         this.name = newName;
-        this.preferences = new ArrayList<>();
         this.preferences = newPreferences;
         this.capacity = newCapacity;
     }
