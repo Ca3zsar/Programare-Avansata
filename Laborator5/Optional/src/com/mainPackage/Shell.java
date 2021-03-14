@@ -3,6 +3,10 @@ package com.mainPackage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Shell {
 
@@ -29,7 +33,7 @@ public class Shell {
         System.out.println(helpString);
     }
 
-    public String[] getCommand()
+    public List<String> getCommand() throws InvalidCommandException
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("shell>> ");
@@ -45,15 +49,22 @@ public class Shell {
 
         if(command == null)
         {
-            return new String[]{"exit"};
+            return new ArrayList<>(Collections.singletonList("exit"));
         }
 
         if(command.equals(""))
         {
-            return new String[]{"pass"};
+            return new ArrayList<>(Collections.singletonList("pass"));
         }
 
-        return command.split(" ");
+        List<String>arguments = new ArrayList<>(Arrays.asList(command.split("\\s+")));
+
+        if(!(new ArrayList<>(Arrays.asList("add","list","play","load","save")).contains(arguments.get(0))))
+        {
+            throw new InvalidCommandException("Invalid command!");
+        }
+
+        return arguments;
     }
 
 }

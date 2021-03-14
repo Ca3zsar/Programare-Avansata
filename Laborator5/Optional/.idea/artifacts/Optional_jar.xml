@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Optional:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Optional_jar</output-path>
+    <root id="archive" name="Optional.jar">
+      <element id="module-output" name="Optional" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/freemarker/freemarker/2.3.8/freemarker-2.3.8.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
