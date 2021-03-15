@@ -2,77 +2,56 @@ package com.mainPackage;
 
 import catalog.*;
 import catalogEntries.*;
+import freemarker.template.TemplateException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class Shell {
-    static public void showHelp() {
-        String helpString = """
-                The commands are:\s
-                add type name path <options>
-                list
-                play name
-                save path\s
-                load path
-                -type from the add command can be of type : Song, Movie or Book
-                -<options> has to be replaced by Artist, Album and Release Year for a Song,
-                \t\t by Author and ISBN for a Book,
-                \t\t by Genre and Release Year for a Movie
-                Use ? instead of spaces in the names of the files or in the paths
-                """;
-        System.out.println(helpString);
-    }
+public class Bonus {
 
-    /**
-     * A method to run the shell, reading commands from the command line, parsing them, checking their validity and
-     * executing them.
-     *
-     * @param mediaCatalog the catalog to execute commands on
-     * @throws InvalidCommandException throw this exception in the case of an invalid command
-     */
-    static public void runShell(Catalog mediaCatalog) throws InvalidCommandException {
-        Shell.showHelp();
+    public static void main(String[] args) {
+        Catalog mediaCatalog = new Catalog();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            CatalogCommand firstAdd = new AddCommand(mediaCatalog, Stream.of(
+                    new Song("Run", "C:\\Users\\cezar\\Desktop\\pa_resources\\Run.mp3", "Nectar", "Joji", 2020),
+                    new Song("MODUS", "C:\\Users\\cezar\\Desktop\\pa_resources\\Modus.mp3", "Nectar", "Joji", 2020),
+                    new Song("Buried Alive", "C:\\Users\\cezar\\Desktop\\pa_resources\\BuriedAlive.mp3", "\n" +
+                            "Nightmare", "Avenged Sevenfold", 2013),
+                    new Book("The Stand", "C:\\Users\\cezar\\Desktop\\pa_resources\\TheStand.pdf", "Stephen King", "9780307743688"),
+                    new Movie("Penguin", "C:\\Users\\cezar\\Desktop\\pa_resources\\Penguin.mp4", "Comedy", 2018)
+            ).collect(Collectors.toList()));
+            firstAdd.executeCommand();
+        } catch (InvalidYearException yearException) {
+            System.err.println(yearException.getMessage());
+        } catch (InvalidISBNException ISBNException) {
+            System.err.println("Verify the ISBN!" + ISBNException.getMessage());
+        }
 
-        String command = null;
+        try {
+            mediaCatalog.report();
+        } catch (IOException | TemplateException exception) {
+            exception.printStackTrace();
+        }
+
+        Shell shell = new Shell();
+
+        shell.showHelp();
 
         boolean shellRunning = true;
-
+        // Read from the command line some commands
         while (shellRunning) {
-            System.out.print("shell>> ");
+            List<String> arguments;
             try {
-                command = reader.readLine();
-            } catch (IOException exception) {
-                System.out.println("Can't read the command from the shell!");
-                exception.printStackTrace();
-            }
-
-            if (command == null) {
-                return;
-            }
-
-            if (command.equals("")) {
+                arguments = shell.getCommand();
+            } catch (InvalidCommandException commandException) {
+                System.out.println(commandException.getMessage());
                 continue;
             }
-
-            // Split the command by the space delimiter
-            List<String> arguments = new ArrayList<>(Arrays.asList(command.split("\\s+")));
-
-            // If the command is not in the already defined ones, throw exception
-            if (!(new ArrayList<>(Arrays.asList("add", "list", "play", "load", "save", "help")).contains(arguments.get(0)))) {
-                throw new InvalidCommandException("Invalid command!");
-            }
-
             arguments = arguments.stream().map(argument -> argument.replace("?", " ")).collect(Collectors.toList());
 
-            // Check what command was read
             switch (arguments.get(0)) {
                 case "pass":
                     continue;
@@ -80,18 +59,20 @@ public class Shell {
                     shellRunning = false;
                     break;
                 case "help":
-                    Shell.showHelp();
+                    shell.showHelp();
                     break;
                 case "add":
                     CatalogEntry newEntry;
                     CatalogCommand toAdd;
                     if (arguments.size() < 2) {
-                        throw new InvalidCommandException("Invalid number of arguments!");
+                        System.out.println("Invalid number of arguments!");
+                        break;
                     }
                     switch (arguments.get(1)) {
                         case "Song" -> {
                             if (arguments.size() < 7) {
-                                throw new InvalidCommandException("Invalid number of arguments!");
+                                System.out.println("Invalid number of arguments!");
+                                break;
                             }
                             try {
                                 newEntry = new Song(arguments.get(2), arguments.get(3), arguments.get(4), arguments.get(5), Integer.parseInt(arguments.get(6)));
@@ -104,7 +85,8 @@ public class Shell {
                         }
                         case "Movie" -> {
                             if (arguments.size() < 6) {
-                                throw new InvalidCommandException("Invalid number of arguments!");
+                                System.out.println("Invalid number of arguments!");
+                                break;
                             }
                             try {
                                 newEntry = new Movie(arguments.get(2), arguments.get(3), arguments.get(4), Integer.parseInt(arguments.get(5)));
@@ -117,7 +99,8 @@ public class Shell {
                         }
                         case "Book" -> {
                             if (arguments.size() < 6) {
-                                throw new InvalidCommandException("Invalid number of arguments!");
+                                System.out.println("Invalid number of arguments!");
+                                break;
                             }
                             try {
                                 newEntry = new Book(arguments.get(2), arguments.get(3), arguments.get(4), arguments.get(5));
@@ -133,21 +116,24 @@ public class Shell {
                     break;
                 case "list":
                     if (arguments.size() > 1) {
-                        throw new InvalidCommandException("Invalid number of arguments!");
+                        System.out.println("Invalid number of arguments!");
+                        break;
                     }
                     CatalogCommand toList = new ListCommand(mediaCatalog);
                     toList.executeCommand();
                     break;
                 case "play":
                     if (arguments.size() < 2) {
-                        throw new InvalidCommandException("Invalid number of arguments!");
+                        System.out.println("Invalid number of arguments!");
+                        break;
                     }
                     CatalogCommand toPlay = new PlayCommand(mediaCatalog, arguments.get(1));
                     toPlay.executeCommand();
                     break;
                 case "load":
                     if (arguments.size() < 2) {
-                        throw new InvalidCommandException("Invalid number of arguments!");
+                        System.out.println("Invalid number of arguments!");
+                        break;
                     }
                     CatalogCommand toLoad = new LoadCommand(arguments.get(1));
                     toLoad.executeCommand();
@@ -159,13 +145,14 @@ public class Shell {
                     break;
                 case "save":
                     if (arguments.size() < 2) {
-                        throw new InvalidCommandException("Invalid number of arguments!");
+                        System.out.println("Invalid number of arguments!");
+                        break;
                     }
                     CatalogCommand toSave = new SaveCommand(mediaCatalog, arguments.get(1));
                     toSave.executeCommand();
                     break;
             }
         }
-    }
 
+    }
 }

@@ -34,7 +34,7 @@ public class Catalog implements Serializable {
 
         input.put("title", "Catalog report");
 
-        List<String> entriesDescription = this.entries.stream().map(entry -> entry.toString()).collect(Collectors.toList());
+        List<String> entriesDescription = this.entries.stream().map(entry->entry.toString()).collect(Collectors.toList());
 
         input.put("entries", entriesDescription);
 
