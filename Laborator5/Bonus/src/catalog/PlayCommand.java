@@ -43,7 +43,7 @@ public class PlayCommand implements CatalogCommand {
                 System.out.println("Cannot open file!" + exception.getMessage());
             }
         } else {
-            System.out.println("The entry " + entryNameToPlay + "does not exist in the catalog!");
+            System.out.println("The entry " + entryNameToPlay + " does not exist in the catalog!");
         }
     }
 }

@@ -9,5 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="freemarker:freemarker:2.3.8" level="project" />
+    <orderEntry type="library" name="org.apache.tika:tika-app:2.0.0-ALPHA" level="project" />
+    <orderEntry type="library" name="pdfbox-app-2.0.22" level="project" />
   </component>
 </module>
