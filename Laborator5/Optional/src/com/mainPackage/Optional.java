@@ -22,7 +22,7 @@ public class Optional {
                     new Book("The Stand", "C:\\Users\\cezar\\Desktop\\pa_resources\\TheStand.pdf", "Stephen King", "9780307743688"),
                     new Movie("Penguin", "C:\\Users\\cezar\\Desktop\\pa_resources\\Penguin.mp4", "Comedy", 2018)
             ).collect(Collectors.toList()));
-            firstAdd.executeCommand();
+            firstAdd.execute();
         } catch (InvalidYearException yearException) {
             System.err.println(yearException.getMessage());
         } catch (InvalidISBNException ISBNException) {

@@ -6,8 +6,10 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
+import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Catalog implements Serializable {
@@ -42,6 +44,11 @@ public class Catalog implements Serializable {
 
         try (Writer fileWriter = new FileWriter("output.html")) {
             template.process(input, fileWriter);
+
+            File entryFile = new File("output.html");
+            Desktop desktop = Desktop.getDesktop();
+
+            desktop.open(entryFile);
         }
     }
 
