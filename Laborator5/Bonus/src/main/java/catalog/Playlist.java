@@ -11,9 +11,22 @@ import java.util.stream.Collectors;
 
 public class Playlist {
     private final Catalog catalog;
+    int startPos;
 
     public Playlist(Catalog catalog) {
         this.catalog = catalog;
+    }
+
+    public String createPlayList()
+    {
+        this.startPos = 0;
+        return solve();
+    }
+
+    public String createPlayList(int startPos)
+    {
+        this.startPos = startPos;
+        return solve();
     }
 
     /**
@@ -21,7 +34,7 @@ public class Playlist {
      * characteristics. First thing, the edges are identified and marked in a Map, then, the first entry is marked to be
      * played in the first day. Then, the others are marked according to the their "neighbours" characteristics.
      */
-    public String createPlaylist() {
+    protected String solve() {
         Map<CatalogEntry, List<CatalogEntry>> edges = new HashMap<>();
         Map<CatalogEntry, Integer> colors = new HashMap<>();
 
@@ -79,11 +92,13 @@ public class Playlist {
             }
         }
 
+        int maxColor = 0;
+
         // The first entry will be played in the first day.
-        colors.put(catalog.entries.get(0), 0);
+        colors.put(catalog.entries.get(this.startPos), 0);
 
         for (CatalogEntry entry : this.catalog.entries) {
-            if (entry.equals(catalog.entries.get(0))) {
+            if (entry.equals(catalog.entries.get(this.startPos))) {
                 continue;
             }
 
@@ -106,12 +121,18 @@ public class Playlist {
                 nextColor++;
             }
 
+            if(nextColor > maxColor)
+            {
+                maxColor = nextColor;
+            }
+
             colors.put(entry, nextColor);
         }
 
         String solution;
 
-        solution = colors.entrySet().stream().map(entry -> entry.getKey().getEntryName() + " is played on day " +
+        solution = ""+maxColor+'\n';
+        solution += colors.entrySet().stream().map(entry -> entry.getKey().getEntryName() + " is played on day " +
                                                 entry.getValue()).collect(Collectors.joining("\n"));
         return solution;
     }

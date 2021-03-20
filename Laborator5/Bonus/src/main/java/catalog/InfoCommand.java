@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class InfoCommand implements CatalogCommand {
-    Catalog catalogToInspect;
+    final Catalog catalogToInspect;
 
     public InfoCommand(Catalog newCatalog) {
         this.catalogToInspect = newCatalog;

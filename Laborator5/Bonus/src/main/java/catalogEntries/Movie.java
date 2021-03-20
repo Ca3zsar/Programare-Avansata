@@ -31,8 +31,8 @@ public class Movie extends CatalogEntry implements Serializable {
     @Override
     public String toString() {
         return "Movie{" + "name=" + entryName +
-                "filePath=" + filePath +
-                "releaseYear=" + releaseYear +
+                " filePath=" + filePath +
+                " releaseYear=" + releaseYear +
                 ", genre='" + genre + '\'' +
                 '}';
     }
