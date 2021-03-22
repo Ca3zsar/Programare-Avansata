@@ -1,6 +1,5 @@
-package sample;
+package drawing;
 
-import javafx.scene.image.Image;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -10,18 +9,17 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -32,13 +30,10 @@ import java.util.ResourceBundle;
 
 public class PaintController implements Initializable {
     @FXML
-    private ChoiceBox<String> sidesBox;
+    private ChoiceBox<String> choiceBox;
 
     @FXML
     private Slider strokeSlide;
-
-    @FXML
-    private Slider sizeSlide;
 
     @FXML
     private ColorPicker colorPicker;
@@ -46,46 +41,61 @@ public class PaintController implements Initializable {
     @FXML
     private Pane centerPane;
 
+    @FXML
+    private Pane circlePane;
+
+    @FXML
+    private Pane polygonPane;
+
+    @FXML
+    private Slider radiusSlider;
+
+    @FXML
+    private Slider lengthSlider;
+
+    @FXML
+    private ChoiceBox<Integer> sidesBox;
+
+    private int elementNumber;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> sidesChoices = FXCollections.observableArrayList("Circle", "3", "4", "5", "6", "7", "8","SnowMan");
-        sidesBox.setValue("3");
-        sidesBox.setItems(sidesChoices);
+        // Initialize the choice box selection
+        ObservableList<String> shapeChoice = FXCollections.observableArrayList("Circle", "Polygon", "Free Drawing");
+        choiceBox.setValue("Circle");
+        choiceBox.setItems(shapeChoice);
 
-        clipPane(centerPane);
+        //Initialize the sides choice box
+        ObservableList<Integer> sidesChoice = FXCollections.observableArrayList(3,4,5,6,7,8);
+        sidesBox.setValue(3);
+        sidesBox.setItems(sidesChoice);
+
+        polygonPane.setVisible(false);
+        circlePane.setVisible(true);
+
+        choiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, first, second) -> {
+            if(choiceBox.getItems().get((Integer) second).equals("Circle"))
+            {
+                polygonPane.setVisible(false);
+                circlePane.setVisible(true);
+            }else {
+                circlePane.setVisible(false);
+                polygonPane.setVisible(true);
+            }
+        });
+
+        this.elementNumber = 0;
+
+        AuxiliaryFunction.clipPane(centerPane);
     }
 
-   private void clipPane(Region region)
-   {
-       final Rectangle outputClip = new Rectangle();
-       outputClip.setWidth(600);
-       outputClip.setHeight(449.6);
-       region.setClip(outputClip);
-
-       region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
-           outputClip.setWidth(newValue.getWidth());
-           outputClip.setHeight(newValue.getHeight());
-       });
-   }
-
-    private void drawSnowMan(double centerX, double centerY, double radius)
-    {
-        drawCircle(centerX,centerY,radius);
-        drawCircle(centerX,centerY-radius/2-radius/4,radius/2);
-        drawCircle(centerX,centerY-radius-radius/8,radius/4);
-
-    }
-
-    private void drawPolygon(double centerX, double centerY, double radius, String sides) {
-        int intSides;
-        intSides = Integer.parseInt(sides);
-
+    private void drawPolygon(double centerX, double centerY, double radius, int sides) {
         Polygon polygon = new Polygon();
 
-        final double angleStep = Math.PI * 2 / intSides;
+        final double angleStep = Math.PI * 2 / sides;
         double angle = Math.PI; // assumes one point is located directly beneath the center point
 
-        for (int i = 0; i < intSides; i++, angle += angleStep) {
+        for (int i = 0; i < sides; i++, angle += angleStep) {
             polygon.getPoints().addAll(
                   Math.sin(angle) * radius + centerX, // x coordinate of the corner
                         Math.cos(angle) * radius + centerY // y coordinate of the corner
@@ -96,35 +106,54 @@ public class PaintController implements Initializable {
         polygon.setStroke(colorPicker.getValue());
         polygon.setStrokeWidth(strokeSlide.getValue());
 
+        AuxiliaryFunction.setEvent(centerPane,polygon);
+
         centerPane.getChildren().add(polygon);
     }
 
-    private void drawCircle(double x, double y, double radius) {
-        Circle circle = new Circle(x,y,radius/2);
+    private void drawCircle(double x, double y) {
+        Circle circle = new Circle(x,y,radiusSlider.getValue()/2);
         circle.setStroke(colorPicker.getValue());
         circle.setStrokeWidth(strokeSlide.getValue());
         circle.setFill(Color.TRANSPARENT);
 
         centerPane.getChildren().add(circle);
+
+        AuxiliaryFunction.setEvent(centerPane,circle);
     }
 
     @FXML
     private void drawOnClick(MouseEvent click) {
-        switch (sidesBox.getValue()) {
-            case "Circle" -> drawCircle(click.getX(), click.getY(), sizeSlide.getValue());
-            case "SnowMan" -> drawSnowMan(click.getX(), click.getY(), sizeSlide.getValue());
-            default -> drawPolygon(click.getX(), click.getY(), sizeSlide.getValue(), sidesBox.getValue());
+        MouseButton button = click.getButton();
+        if(button == MouseButton.PRIMARY ) {
+            if ("Circle".equals(choiceBox.getValue())) {
+                drawCircle(click.getX(), click.getY());
+            } else {
+                drawPolygon(click.getX(), click.getY(), lengthSlider.getValue(), sidesBox.getValue());
+            }
         }
+        this.elementNumber++;
     }
 
     @FXML
     private void resetBoard() {
         centerPane.getChildren().clear();
+        elementNumber = 0;
     }
 
     @FXML
     private void exitAction() {
         System.exit(0);
+    }
+
+    @FXML
+    private void undoAction()
+    {
+        if(elementNumber != 0) {
+            elementNumber--;
+            int length = centerPane.getChildren().size() - 1;
+            centerPane.getChildren().remove(length);
+        }
     }
 
     @FXML
