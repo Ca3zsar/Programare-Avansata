@@ -92,7 +92,8 @@ public class AuxiliaryFunction {
 
         for(Circle point : points)
         {
-            if((point.getCenterX()-centerX)*(point.getCenterX()-centerX) + (point.getCenterY()-centerY)*(point.getCenterY()-centerY) <= radius*radius)
+            if((point.getCenterX()-centerX)*(point.getCenterX()-centerX) + (point.getCenterY()-centerY)*(point.getCenterY()-centerY) <= radius*radius &&
+                    (point.getCenterX()-centerX)*(point.getCenterX()-centerX) + (point.getCenterY()-centerY)*(point.getCenterY()-centerY) >= radius*radius - radius*radius/10 )
             {
                 correct++;
             }
