@@ -8,8 +8,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+
+import java.util.List;
 
 public class AuxiliaryFunction {
 
@@ -63,5 +66,45 @@ public class AuxiliaryFunction {
         circlePanel.getChildren().add(radiusSlider);
 
         specificPanel.getChildren().add(circlePanel);
+    }
+
+    private static double distance(double x1, double y1, double x2, double y2)
+    {
+        return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+    }
+
+    public static boolean isLine(List<Circle> points)
+    {
+        int listSize = points.size();
+        int correct = 0 ;
+
+        double x1,y1,x2,y2;
+        x1 = points.get(0).getCenterX();
+        x2 = points.get(listSize-1).getCenterX();
+        y1 = points.get(0).getCenterY();
+        y2 = points.get(listSize-1).getCenterY();
+
+        double gradient = (y2 - y1) / (x2 - x1);
+
+        for(int i=2;i<listSize-1;i++)
+        {
+            double currentX = points.get(i).getCenterX();
+            double currentY = points.get(i).getCenterY();
+            if(Math.abs(distance(currentX,currentY,x1,y1) + distance(currentX,currentY,x2,y2)-distance(x1,y1,x2,y2)) <= 1)
+            {
+                correct++;
+            }
+        }
+
+        if(correct >= listSize/10)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isCircle(List<Circle> points)
+    {
+        return false;
     }
 }

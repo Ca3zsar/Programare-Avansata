@@ -6,9 +6,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -17,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -26,11 +25,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class PaintController implements Initializable {
+    private List<Circle> points;
+
     @FXML
     private ChoiceBox<String> choiceBox;
+
+    @FXML
+    private Label strokeLabel;
 
     @FXML
     private Slider strokeSlide;
@@ -48,6 +55,9 @@ public class PaintController implements Initializable {
     private Pane polygonPane;
 
     @FXML
+    private Pane drawingPane;
+
+    @FXML
     private Slider radiusSlider;
 
     @FXML
@@ -55,6 +65,12 @@ public class PaintController implements Initializable {
 
     @FXML
     private ChoiceBox<Integer> sidesBox;
+
+    @FXML
+    private Slider brushSize;
+
+    @FXML
+    private CheckBox recognition;
 
     private int elementNumber;
 
@@ -67,24 +83,43 @@ public class PaintController implements Initializable {
 
         //Initialize the sides choice box
         ObservableList<Integer> sidesChoice = FXCollections.observableArrayList(3,4,5,6,7,8);
-        sidesBox.setValue(3);
         sidesBox.setItems(sidesChoice);
+        sidesBox.setValue(3);
+
+        colorPicker.setValue(Color.BLACK);
 
         polygonPane.setVisible(false);
+        drawingPane.setVisible(false);
         circlePane.setVisible(true);
 
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, first, second) -> {
-            if(choiceBox.getItems().get((Integer) second).equals("Circle"))
-            {
-                polygonPane.setVisible(false);
-                circlePane.setVisible(true);
-            }else {
-                circlePane.setVisible(false);
-                polygonPane.setVisible(true);
+            switch (choiceBox.getItems().get((Integer) second)) {
+                case "Circle" -> {
+                    polygonPane.setVisible(false);
+                    circlePane.setVisible(true);
+                    drawingPane.setVisible(false);
+                    strokeLabel.setVisible(true);
+                    strokeSlide.setVisible(true);
+                }
+                case "Polygon" -> {
+                    circlePane.setVisible(false);
+                    polygonPane.setVisible(true);
+                    drawingPane.setVisible(false);
+                    strokeLabel.setVisible(true);
+                    strokeSlide.setVisible(true);
+                }
+                default -> {
+                    drawingPane.setVisible(true);
+                    polygonPane.setVisible(false);
+                    circlePane.setVisible(false);
+                    strokeLabel.setVisible(false);
+                    strokeSlide.setVisible(false);
+                }
             }
         });
 
         this.elementNumber = 0;
+        points = new LinkedList<>();
 
         AuxiliaryFunction.clipPane(centerPane);
     }
@@ -122,17 +157,70 @@ public class PaintController implements Initializable {
         AuxiliaryFunction.setEvent(centerPane,circle);
     }
 
+
+    @FXML
+    private void freeDraw(MouseEvent click)
+    {
+        MouseButton button = click.getButton();
+        if(button == MouseButton.PRIMARY)
+        {
+            if("Free Drawing".equals(choiceBox.getValue()))
+            {
+                Circle newCircle = new Circle(click.getX(),click.getY(),brushSize.getValue());
+                newCircle.setFill(colorPicker.getValue());
+                AuxiliaryFunction.setEvent(centerPane,newCircle);
+
+                elementNumber++;
+
+                centerPane.getChildren().add(newCircle);
+                points.add(newCircle);
+            }
+        }
+    }
+
     @FXML
     private void drawOnClick(MouseEvent click) {
         MouseButton button = click.getButton();
         if(button == MouseButton.PRIMARY ) {
             if ("Circle".equals(choiceBox.getValue())) {
                 drawCircle(click.getX(), click.getY());
-            } else {
+            } else if("Polygon".equals(choiceBox.getValue())){
                 drawPolygon(click.getX(), click.getY(), lengthSlider.getValue(), sidesBox.getValue());
             }
         }
         this.elementNumber++;
+    }
+
+    @FXML
+    private void recognize()
+    {
+        if(recognition.isSelected())
+        {
+            if(AuxiliaryFunction.isLine(points))
+            {
+                Line toDraw = new Line();
+                toDraw.setStartX(points.get(0).getCenterX());
+                toDraw.setStartY(points.get(0).getCenterY());
+                toDraw.setEndX(points.get(points.size()-1).getCenterX());
+                toDraw.setEndY(points.get(points.size()-1).getCenterY());
+                toDraw.setStrokeWidth(brushSize.getValue());
+                toDraw.setStroke(colorPicker.getValue());
+
+                centerPane.getChildren().add(toDraw);
+                centerPane.getChildren().removeAll(points);
+                System.out.println("HERE");
+            }else if(AuxiliaryFunction.isCircle(points)) {
+                Circle toDraw = new Circle();
+                toDraw.setCenterX(points.get(0).getCenterX());
+                toDraw.setCenterY(points.get(0).getCenterY());
+                toDraw.setRadius((points.get(0).getCenterX()-points.get(points.size() /2).getCenterX())/2);
+                toDraw.setStrokeWidth(brushSize.getValue());
+
+                centerPane.getChildren().add(toDraw);
+                centerPane.getChildren().removeAll(points);
+            }
+        }
+        points.clear();
     }
 
     @FXML
