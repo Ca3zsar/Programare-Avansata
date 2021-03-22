@@ -25,13 +25,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class PaintController implements Initializable {
     private List<Circle> points;
+    static public double toGetRadius;
 
     @FXML
     private ChoiceBox<String> choiceBox;
@@ -208,16 +208,20 @@ public class PaintController implements Initializable {
 
                 centerPane.getChildren().add(toDraw);
                 centerPane.getChildren().removeAll(points);
+                elementNumber-=points.size()-1;
                 System.out.println("HERE");
             }else if(AuxiliaryFunction.isCircle(points)) {
                 Circle toDraw = new Circle();
                 toDraw.setCenterX(points.get(0).getCenterX());
                 toDraw.setCenterY(points.get(0).getCenterY());
-                toDraw.setRadius((points.get(0).getCenterX()-points.get(points.size() /2).getCenterX())/2);
+                toDraw.setRadius(toGetRadius);
+                toDraw.setFill(Color.TRANSPARENT);
+                toDraw.setStroke(colorPicker.getValue());
                 toDraw.setStrokeWidth(brushSize.getValue());
 
                 centerPane.getChildren().add(toDraw);
                 centerPane.getChildren().removeAll(points);
+                elementNumber-=points.size()-1;
             }
         }
         points.clear();
