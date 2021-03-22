@@ -7,16 +7,18 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -42,48 +44,60 @@ public class PaintController implements Initializable {
     private ColorPicker colorPicker;
 
     @FXML
-    private Canvas canvas;
-
-    @FXML
-    private BorderPane canvasRoot;
-
-    private GraphicsContext graphicsContext;
+    private Pane centerPane;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> sidesChoices = FXCollections.observableArrayList("Circle", "3", "4", "5", "6", "7", "8");
+        ObservableList<String> sidesChoices = FXCollections.observableArrayList("Circle", "3", "4", "5", "6", "7", "8","CustomTriangle");
         sidesBox.setValue("3");
         sidesBox.setItems(sidesChoices);
 
-        graphicsContext = canvas.getGraphicsContext2D();
-
+        clipPane(centerPane,600,449.6);
     }
 
-    private void setPolygonSides(double centerX, double centerY, double radius, String sides) {
-        int intSides = Integer.parseInt(sides);
+   private void clipPane(Region region, double width, double height)
+   {
+       final Rectangle outputClip = new Rectangle();
+       outputClip.setWidth(width);
+       outputClip.setHeight(height);
+       region.setClip(outputClip);
 
+       region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+           outputClip.setWidth(newValue.getWidth());
+           outputClip.setHeight(newValue.getHeight());
+       });
+   }
+
+    private void drawPolygon(double centerX, double centerY, double radius, String sides) {
+        int intSides;
         intSides = Integer.parseInt(sides);
+
+        Polygon polygon = new Polygon();
+
         final double angleStep = Math.PI * 2 / intSides;
         double angle = Math.PI; // assumes one point is located directly beneath the center point
 
-        double[] xArray = new double[intSides];
-        double[] yArray = new double[intSides];
-
         for (int i = 0; i < intSides; i++, angle += angleStep) {
-            xArray[i] = Math.sin(angle) * radius + centerX; // x coordinate of the corner
-            yArray[i] = Math.cos(angle) * radius + centerY; // y coordinate of the corner
+            polygon.getPoints().addAll(
+                  Math.sin(angle) * radius + centerX, // x coordinate of the corner
+                        Math.cos(angle) * radius + centerY // y coordinate of the corner
+            );
         }
 
-        graphicsContext.setStroke(colorPicker.getValue());
-        graphicsContext.setLineWidth(strokeSlide.getValue());
-        graphicsContext.strokePolygon(xArray, yArray, intSides);
+        polygon.setFill(Color.TRANSPARENT);
+        polygon.setStroke(colorPicker.getValue());
+        polygon.setStrokeWidth(strokeSlide.getValue());
 
+        centerPane.getChildren().add(polygon);
     }
 
     private void drawCircle(double x, double y) {
-        graphicsContext.setStroke(colorPicker.getValue());
-        graphicsContext.setLineWidth(strokeSlide.getValue());
-        graphicsContext.strokeOval(x, y, sizeSlide.getValue() / 2, sizeSlide.getValue() / 2);
+        Circle circle = new Circle(x,y,sizeSlide.getValue()/2);
+        circle.setStroke(colorPicker.getValue());
+        circle.setStrokeWidth(strokeSlide.getValue());
+        circle.setFill(Color.TRANSPARENT);
+
+        centerPane.getChildren().add(circle);
     }
 
     @FXML
@@ -91,13 +105,13 @@ public class PaintController implements Initializable {
         if ("Circle".equals(sidesBox.getValue())) {
             drawCircle(click.getX(), click.getY());
         } else {
-            setPolygonSides(click.getX(), click.getY(), sizeSlide.getValue(), sidesBox.getValue());
+            drawPolygon(click.getX(), click.getY(), sizeSlide.getValue(), sidesBox.getValue());
         }
     }
 
     @FXML
     private void resetBoard() {
-        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        centerPane.getChildren().clear();
     }
 
     @FXML
@@ -107,7 +121,7 @@ public class PaintController implements Initializable {
 
     @FXML
     private void saveAction() {
-        WritableImage screenshot = canvas.snapshot(new SnapshotParameters(), null);
+        WritableImage screenshot = centerPane.snapshot(new SnapshotParameters(), null);
 
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
@@ -144,7 +158,7 @@ public class PaintController implements Initializable {
 
                 Image image = SwingFXUtils.toFXImage(bufferedImage, null);
 
-                graphicsContext.drawImage(image,0.0,0.0);
+                centerPane.getChildren().add(new ImageView(image));
             }
         }catch (IOException exception)
         {
