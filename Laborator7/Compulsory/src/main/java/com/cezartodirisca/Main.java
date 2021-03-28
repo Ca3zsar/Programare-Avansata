@@ -21,7 +21,6 @@ public class Main {
         int n = random.nextInt(7) + 4; // Generate a number n between 4 and 10 to represent the dimensions of the board.
 
         int numberOfTokens = random.nextInt((n*n)/4) + 4;
-        System.out.println(numberOfTokens);
         int counter = 0;
 
         while(counter<numberOfTokens)
@@ -63,6 +62,9 @@ public class Main {
         {
             executor.execute(player);
         }
+        while(executor.getActiveCount() != 0);
         executor.shutdown();
+
+        System.out.println(game.stringBuilder.toString());
     }
 }
