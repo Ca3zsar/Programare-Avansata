@@ -74,12 +74,12 @@ public class AuxiliaryFunction {
         int listSize = points.size();
 
         x1 = points.get(0).getCenterX();
-        x2 = points.get(listSize/2).getCenterX();
-        x3 = points.get(listSize-1).getCenterX();
+        x2 = points.get(listSize/3).getCenterX();
+        x3 = points.get(listSize*2/3).getCenterX();
 
         y1 = points.get(0).getCenterY();
         y2 = points.get(listSize/2).getCenterY();
-        y3 = points.get(listSize-1).getCenterY();
+        y3 = points.get(listSize*2/3).getCenterY();
 
         centerX = ((x1*x1+y1*y1)*(y2-y3) + (x2*x2 + y2*y2)*(y3-y1)+(x3*x3+y3*y3)*(y1-y2))/
                     (2*(x1*(y2-y3)-y1*(x2-x3)+x2*y3-x3*y2));

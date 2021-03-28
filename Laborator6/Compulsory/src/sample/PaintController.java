@@ -48,31 +48,29 @@ public class PaintController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> sidesChoices = FXCollections.observableArrayList("Circle", "3", "4", "5", "6", "7", "8","SnowMan");
+        ObservableList<String> sidesChoices = FXCollections.observableArrayList("Circle", "3", "4", "5", "6", "7", "8", "SnowMan");
         sidesBox.setValue("3");
         sidesBox.setItems(sidesChoices);
 
         clipPane(centerPane);
     }
 
-   private void clipPane(Region region)
-   {
-       final Rectangle outputClip = new Rectangle();
-       outputClip.setWidth(600);
-       outputClip.setHeight(449.6);
-       region.setClip(outputClip);
+    private void clipPane(Region region) {
+        final Rectangle outputClip = new Rectangle();
+        outputClip.setWidth(600);
+        outputClip.setHeight(449.6);
+        region.setClip(outputClip);
 
-       region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
-           outputClip.setWidth(newValue.getWidth());
-           outputClip.setHeight(newValue.getHeight());
-       });
-   }
+        region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+            outputClip.setWidth(newValue.getWidth());
+            outputClip.setHeight(newValue.getHeight());
+        });
+    }
 
-    private void drawSnowMan(double centerX, double centerY, double radius)
-    {
-        drawCircle(centerX,centerY,radius);
-        drawCircle(centerX,centerY-radius/2-radius/4,radius/2);
-        drawCircle(centerX,centerY-radius-radius/8,radius/4);
+    private void drawSnowMan(double centerX, double centerY, double radius) {
+        drawCircle(centerX, centerY, radius);
+        drawCircle(centerX, centerY - radius / 2 - radius / 4, radius / 2);
+        drawCircle(centerX, centerY - radius - radius / 8, radius / 4);
 
     }
 
@@ -87,8 +85,8 @@ public class PaintController implements Initializable {
 
         for (int i = 0; i < intSides; i++, angle += angleStep) {
             polygon.getPoints().addAll(
-                  Math.sin(angle) * radius + centerX, // x coordinate of the corner
-                        Math.cos(angle) * radius + centerY // y coordinate of the corner
+                    Math.sin(angle) * radius + centerX, // x coordinate of the corner
+                    Math.cos(angle) * radius + centerY // y coordinate of the corner
             );
         }
 
@@ -100,7 +98,7 @@ public class PaintController implements Initializable {
     }
 
     private void drawCircle(double x, double y, double radius) {
-        Circle circle = new Circle(x,y,radius/2);
+        Circle circle = new Circle(x, y, radius / 2);
         circle.setStroke(colorPicker.getValue());
         circle.setStrokeWidth(strokeSlide.getValue());
         circle.setFill(Color.TRANSPARENT);
@@ -147,8 +145,7 @@ public class PaintController implements Initializable {
     }
 
     @FXML
-    private void loadAction()
-    {
+    private void loadAction() {
 
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter pngFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
@@ -159,17 +156,15 @@ public class PaintController implements Initializable {
 
         File toLoadFile = fileChooser.showOpenDialog(new Stage());
 
-        try{
-            if(toLoadFile != null)
-            {
+        try {
+            if (toLoadFile != null) {
                 BufferedImage bufferedImage = ImageIO.read(toLoadFile);
 
                 Image image = SwingFXUtils.toFXImage(bufferedImage, null);
 
                 centerPane.getChildren().add(new ImageView(image));
             }
-        }catch (IOException exception)
-        {
+        } catch (IOException exception) {
             exception.printStackTrace();
         }
     }
