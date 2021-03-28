@@ -35,17 +35,28 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        System.out.println(turn);
-        Token value = board.getTokenValue(index);
-        board.deleteToken(index);
+
+        if(boardNotEmpty()){
+            Token value = board.getTokenValue(index);
+            board.deleteToken(index);
+
+            try {
+                setActualTurn(turn+1);
+            } catch (InvalidValueException e) {
+                e.printStackTrace();
+            }
+            notifyAll();
+
+            return value;
+        }
 
         try {
             setActualTurn(turn+1);
         } catch (InvalidValueException e) {
             e.printStackTrace();
         }
-        notify();
+        notifyAll();
 
-        return value;
+        return null;
     }
 }
