@@ -11,16 +11,16 @@ public class TimeKeeper extends Thread{
     {
         long startTime = System.currentTimeMillis();
 
-        while(isRunning && elapsedSeconds<=60)
+        while(isRunning && elapsedSeconds<=10)
         {
             try {
                 TimeUnit.SECONDS.sleep(1);
                 elapsedSeconds++;
             } catch (InterruptedException e) {
+
                 e.printStackTrace();
             }
+            timeElapsed = elapsedSeconds;
         }
-
-        timeElapsed = elapsedSeconds;
     }
 }

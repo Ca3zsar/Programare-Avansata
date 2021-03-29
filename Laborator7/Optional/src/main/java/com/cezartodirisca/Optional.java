@@ -50,9 +50,10 @@ public class Optional {
         }
 
         while (executor.getActiveCount() != 0 && timeKeeper.isAlive()) ;
+
         if (timeKeeper.isAlive()) {
             timeKeeper.isRunning = false;
-            System.out.println("Time elapsed : " + timeKeeper.elapsedSeconds + " seconds");
+            System.out.println("Time elapsed : " + timeKeeper.timeElapsed + " seconds");
         } else {
             System.out.println("Time exceeded!");
         }
