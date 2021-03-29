@@ -3,9 +3,9 @@ package com.cezartodirisca;
 public class Game {
     private final Board board;
     private final int playerNumber;
-    StringBuilder stringBuilder;
+    volatile StringBuilder stringBuilder;
     private int actualTurn;
-    private int ready;
+    private volatile int ready;
 
     public Game(Board board, int playerNumber) {
         this.board = board;
@@ -16,23 +16,12 @@ public class Game {
         stringBuilder = new StringBuilder();
     }
 
-    public boolean boardNotEmpty() {
+    public synchronized boolean boardNotEmpty() {
         return board.getSize() != 0;
     }
 
     public void setReady(int value) {
         this.ready = value;
-    }
-
-    public void setBuffer(String toAdd) {
-        stringBuilder.append(toAdd).append("\n");
-    }
-
-    public synchronized void setActualTurn(int newTurn) throws InvalidValueException {
-        if (newTurn < 0) {
-            throw new InvalidValueException("Invalid turn!");
-        }
-        this.actualTurn = newTurn % playerNumber;
     }
 
     public synchronized Token takeToken(int turn, int index) throws NonexistentTokenException {
@@ -44,32 +33,20 @@ public class Game {
             }
         }
 
-        while (this.ready == 0) ;
-
+        while(this.ready == 0 );
         ready = 0;
 
+        Token value = null;
+
         if (boardNotEmpty()) {
-            Token value = board.getTokenValue(index);
+            value = board.getTokenValue(index);
             board.deleteToken(index);
-
-            try {
-                setActualTurn(turn + 1);
-            } catch (InvalidValueException e) {
-                e.printStackTrace();
-            }
-            notifyAll();
-
-            return value;
         }
 
-        try {
-            setActualTurn(turn + 1);
-        } catch (InvalidValueException e) {
-            e.printStackTrace();
-        }
+        actualTurn= (actualTurn+1)%playerNumber;
         notifyAll();
 
-        return null;
+        return value;
     }
 
     @Override

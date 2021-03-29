@@ -34,14 +34,12 @@ public class Player implements Runnable {
                 int xValue = tokens.get(tokens.size() - 1).getXCoordinate();
                 int yValue = tokens.get(tokens.size() - 1).getYCoordinate();
 
-
-                gameToPlay.setBuffer("Player " + turn + " " + this.name + " has chosen the token : (" + xValue + ", " + yValue + ")");
+                System.out.println("Player " + turn + " " + this.name + " has chosen the token : (" + xValue + ", " + yValue + ")");
+                System.out.flush();
                 gameToPlay.setReady(1);
-
             } catch (NonexistentTokenException exception) {
                 exception.printStackTrace();
             }
-
         }
     }
 }

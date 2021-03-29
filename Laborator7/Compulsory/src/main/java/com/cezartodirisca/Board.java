@@ -1,12 +1,13 @@
 package com.cezartodirisca;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Board {
-    private final List<Token> tokens;
+    private CopyOnWriteArrayList<Token> tokens;
 
     public Board(List<Token> tokens) {
-        this.tokens = tokens;
+        this.tokens = new CopyOnWriteArrayList<>(tokens);
     }
 
     public int getSize()
