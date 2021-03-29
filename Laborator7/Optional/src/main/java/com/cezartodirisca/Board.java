@@ -4,28 +4,24 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Board {
-    private CopyOnWriteArrayList<Token> tokens;
+    private final CopyOnWriteArrayList<Token> tokens;
 
     public Board(List<Token> tokens) {
         this.tokens = new CopyOnWriteArrayList<>(tokens);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return tokens.size();
     }
 
-    public void addToken(Token newToken)
-    {
+    public void addToken(Token newToken) {
         tokens.add(newToken);
     }
 
-    public Token getTokenValue(int index) throws NonexistentTokenException
-    {
+    public Token getTokenValue(int index) throws NonexistentTokenException {
         int listSize = tokens.size();
 
-        if(index < 0 || index >= listSize)
-        {
+        if (index < 0 || index >= listSize) {
             throw new NonexistentTokenException("Non existing token!");
         }
 
@@ -36,12 +32,10 @@ public class Board {
         return tokens;
     }
 
-    public void deleteToken(int index) throws NonexistentTokenException
-    {
+    public void deleteToken(int index) throws NonexistentTokenException {
         int listSize = tokens.size();
 
-        if(index < 0 || index >= listSize)
-        {
+        if (index < 0 || index >= listSize) {
             throw new NonexistentTokenException("Non existing token!");
         }
 

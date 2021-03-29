@@ -17,12 +17,12 @@ public class Optional {
         List<Token> tokens = new ArrayList<>();
 
         Random random = new Random();
-        int n = random.nextInt(3) * 4 + 4; // Generate a number n between 4 and 12 to represent the dimensions of the board.
+        int n = random.nextInt(3) * 4 + 4; // Generate a number n between 4 and 15 to represent the dimensions of the board.
 
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
-                tokens.add(new Token(i * j+1, i, j));
-                tokens.add(new Token(i * j+1, j, i));
+                tokens.add(new Token(i * j + 1, i, j));
+                tokens.add(new Token(i * j + 1, j, i));
             }
         }
 
@@ -40,12 +40,23 @@ public class Optional {
         System.out.println("Table size : " + n);
         System.out.println("Each token's value is x * y + 1");
 
+        TimeKeeper timeKeeper = new TimeKeeper();
+        timeKeeper.setDaemon(true);
+        timeKeeper.start();
+
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(playerNumber);
         for (Player player : players) {
             executor.execute(player);
         }
-        while (executor.getActiveCount() != 0) ;
-        executor.shutdown();
+
+        while (executor.getActiveCount() != 0 && timeKeeper.isAlive()) ;
+        if (timeKeeper.isAlive()) {
+            timeKeeper.isRunning = false;
+            System.out.println("Time elapsed : " + timeKeeper.elapsedSeconds + " seconds");
+        } else {
+            System.out.println("Time exceeded!");
+        }
+        executor.shutdownNow();
 
         for (Player player : players) {
             player.computeScore();
