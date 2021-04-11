@@ -11,7 +11,7 @@ public class TimeKeeper extends Thread{
     {
         long startTime = System.currentTimeMillis();
 
-        while(isRunning && elapsedSeconds<=10)
+        while(isRunning && elapsedSeconds<=60)
         {
             try {
                 TimeUnit.SECONDS.sleep(1);
