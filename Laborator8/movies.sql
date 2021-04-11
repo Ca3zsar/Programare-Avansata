@@ -1,7 +1,10 @@
 DROP TABLE movies;
 DROP TABLE genres;
-DROP TABLE association;
-
+DROP TABLE movie_genre;
+DROP TABLE actors;
+DROP TABLE directors;
+DROP TABLE actors_movies;
+DROP TABLE directors_movies;
 /
 
 CREATE TABLE movies (id INTEGER, title VARCHAR2(100), release_date DATE, 
@@ -13,6 +16,23 @@ CREATE TABLE genres (id INTEGER, genre_name VARCHAR2(20));
 
 /
 
-CREATE TABLE association (movie_id INTEGER, genre_id INTEGER);
+CREATE TABLE movie_genres (movie_id INTEGER, genre_id INTEGER);
 
 /
+
+CREATE TABLE actors (id INT,name VARCHAR2(30), birthday DATE);
+
+/
+
+CREATE TABLE directors(id INT, name VARCHAR2(30), birthday DATE);
+
+/
+
+CREATE TABLE actors_movies(actor_id INT, movie_id INT);
+
+/
+
+CREATE TABLE directors_movies(director_id INT, movie_id INT);
+
+/
+
