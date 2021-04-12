@@ -6,7 +6,6 @@ import DAOClasses.MovieDAO;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.List;
 
 import freemarker.template.TemplateException;
 import org.apache.ibatis.jdbc.ScriptRunner;
