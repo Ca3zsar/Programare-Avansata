@@ -11,7 +11,7 @@ public class Director {
     public Director(String name, String birthday) {
         this.name = name;
         try {
-            this.birthday = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
+            this.birthday = new SimpleDateFormat("dd-MM-yyyy").parse(birthday);
         } catch (ParseException e) {
             e.printStackTrace();
         }

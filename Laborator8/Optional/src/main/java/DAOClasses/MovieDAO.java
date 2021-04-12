@@ -36,6 +36,7 @@ public class MovieDAO implements DAO<Movie>{
 
                 toReturn = new Movie(title,release,duration,score);
             }
+            results.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -61,6 +62,7 @@ public class MovieDAO implements DAO<Movie>{
 
                 toReturn.add(new Movie(title,release,duration,score));
             }
+            results.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -79,12 +81,13 @@ public class MovieDAO implements DAO<Movie>{
             while(results.next())
             {
                 String title = results.getString(2);
-                String release = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
+                String release = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
                 int duration = results.getInt(4);
                 double score = results.getDouble(5);
 
                 toReturn.add(new Movie(title,release,duration,score));
             }
+            results.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

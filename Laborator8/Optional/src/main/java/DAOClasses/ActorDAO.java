@@ -30,7 +30,7 @@ public class ActorDAO implements DAO<Actor>{
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
+                String birthday = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
 
                 toReturn = new Actor(name, birthday);
             }

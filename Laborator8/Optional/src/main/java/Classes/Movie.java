@@ -13,7 +13,7 @@ public class Movie {
     public Movie(String title, String releaseDate, int duration, double score) {
         this.title = title;
         try {
-            this.releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDate);
+            this.releaseDate = new SimpleDateFormat("dd-MM-yyyy").parse(releaseDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }

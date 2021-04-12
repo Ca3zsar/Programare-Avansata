@@ -30,7 +30,7 @@ public class DirectorDAO implements DAO<Director>{
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
+                String birthday = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
 
                 toReturn = new Director(name, birthday);
             }
@@ -53,7 +53,7 @@ public class DirectorDAO implements DAO<Director>{
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
+                String birthday = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
 
                 toReturn.add(new Director(name,birthday));
             }
@@ -88,7 +88,7 @@ public class DirectorDAO implements DAO<Director>{
     @Override
     public void insert(int id,Director newDirector)
     {
-        try (PreparedStatement prepared = connection.prepareStatement("INSERT INTO actors VALUES(?, ?, ?)")) {
+        try (PreparedStatement prepared = connection.prepareStatement("INSERT INTO directors VALUES(?, ?, ?)")) {
             prepared.setInt(1, id);
             prepared.setString(2, newDirector.getName());
             prepared.setDate(3, new java.sql.Date(newDirector.getBirthday().getTime()));
