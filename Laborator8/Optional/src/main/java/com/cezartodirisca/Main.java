@@ -4,13 +4,11 @@ import Classes.Movie;
 import DAOClasses.DAO;
 import DAOClasses.MovieDAO;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
 
+import freemarker.template.TemplateException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 public class Main {
@@ -34,13 +32,15 @@ public class Main {
 //            }
 
             //Display the directors and the movies they directed
-            List<List<String>> directed = importer.directedMovies();
-            for(List<String> row:directed)
-            {
-                System.out.println(row.get(0) + " - " + row.get(1));
-            }
+//            List<List<String>> directed = importer.directedMovies();
+//            for(List<String> row:directed)
+//            {
+//                System.out.println(row.get(0) + " - " + row.get(1));
+//            }
 
-        } catch (SQLException | ClassNotFoundException | FileNotFoundException exception) {
+            importer.report();
+
+        } catch (SQLException | ClassNotFoundException | TemplateException | IOException exception) {
             exception.printStackTrace();
         }
     }
