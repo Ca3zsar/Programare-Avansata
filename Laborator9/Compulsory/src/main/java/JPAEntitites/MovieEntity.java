@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@NamedQuery(name="findByTitle",
+        query="SELECT movie FROM MovieEntity movie WHERE movie.title = :name")
 @Entity
 @Table(name = "movies")
 public class MovieEntity {
@@ -12,6 +14,18 @@ public class MovieEntity {
     @GeneratedValue(generator = "movieSequence",strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private int id;
+
+    public MovieEntity()
+    {
+
+    }
+
+    public MovieEntity(String title, Date releaseDate, int duration, double score) {
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.score = score;
+    }
 
     @Column(name = "title")
     private String title;

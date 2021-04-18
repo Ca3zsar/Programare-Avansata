@@ -1,7 +1,9 @@
 package Repositories;
 
+import java.util.List;
+
 public interface Repository<T> {
-    public void create(T object);
-    public T findById(long id);
-    public T findByName(String name);
+    void create(T object);
+    T findById(long id);
+    List<T> findByName(String name);
 }

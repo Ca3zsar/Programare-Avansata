@@ -1,9 +1,5 @@
 package com.cezartodirisca;
 
-import Classes.Movie;
-import DAOClasses.DAO;
-import DAOClasses.MovieDAO;
-
 import java.io.*;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -25,31 +21,17 @@ public class Main {
 
             scriptRunner.runScript(reader);
 
-            DAO<Movie> movieManager = new MovieDAO(JDBCConnection.getInstance().getConnection());
             Factory factory = Factory.getInstance();
             EntityManagerFactory managerFactory = factory.getEntityManagerFactory();
 
             Repository<MovieEntity> movieRepository = new MovieRepository(managerFactory);
-            MovieEntity movie = new MovieEntity();
-            movie.setTitle("titlu ceva");
-            movie.setDuration(10);
-            movie.setScore(9);
-            movie.setReleaseDate(new SimpleDateFormat("dd.MM.yyyy")
-                    .parse("01.01.1991"));
-            movieRepository.create(movie);
+            for(int i=0;i<10;i++)
+            {
+                MovieEntity movie = new MovieEntity("title"+i,new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2000"),i*100,i);
+                movieRepository.create(movie);
+            }
 
-            movie = new MovieEntity();
-            movie.setTitle("Abracadabra");
-            movie.setDuration(10);
-            movie.setScore(9);
-            movie.setReleaseDate(new SimpleDateFormat("dd.MM.yyyy")
-                    .parse("01.01.1991"));
-            movie.setDuration(100000);
-            movieRepository.create(movie);
-
-            MovieEntity toGet = movieRepository.findById(2);
-            System.out.println(toGet.getTitle());
-
+            managerFactory.close();
         } catch (SQLException | ClassNotFoundException | IOException | ParseException exception) {
             exception.printStackTrace();
         }
