@@ -24,11 +24,7 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="2ce813ba-ff35-4b57-956e-d7a3017488ef">
-        <schema name="MOVIE" object-types="function, package, database trigger, table, dimension, procedure, view, dblink, materialized view, index, nested table, type, sequence, dataset trigger, column, cluster, constraint, synonym" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="2ce813ba-ff35-4b57-956e-d7a3017488ef">

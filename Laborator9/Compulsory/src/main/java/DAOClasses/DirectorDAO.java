@@ -1,17 +1,16 @@
 package DAOClasses;
 
-import JPAEntitites.DirectorEntity;
+import Classes.Director;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DirectorDAO implements DAO<DirectorEntity>{
+public class DirectorDAO implements DAO<Director>{
     private final Connection connection;
 
     public DirectorDAO(Connection connection)
@@ -20,46 +19,45 @@ public class DirectorDAO implements DAO<DirectorEntity>{
     }
 
     @Override
-    public DirectorEntity getById(int id)
+    public Director getById(int id)
     {
         ResultSet results;
-        DirectorEntity toReturn = new DirectorEntity();
-        try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM directors WHERE id=?"))
+        Director toReturn = null;
+        try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM actors WHERE id=?"))
         {
             prepared.setInt(1,id);
             results = prepared.executeQuery();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = formatter.format(results.getDate(3));
+                String birthday = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
 
-                toReturn = new DirectorEntity(name, formatter.parse(birthday));
+                toReturn = new Director(name, birthday);
             }
-        } catch (SQLException | ParseException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
         return toReturn;
     }
 
     @Override
-    public List<DirectorEntity> getByName(String actorName)
+    public List<Director> getByName(String actorName)
     {
         ResultSet results;
-        List<DirectorEntity> toReturn = new ArrayList<>();
+        List<Director> toReturn = new ArrayList<>();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM actors WHERE name=?"))
         {
             prepared.setString(1,actorName);
             results = prepared.executeQuery();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = formatter.format(results.getDate(3));
+                String birthday = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
 
-                toReturn.add(new DirectorEntity(name,formatter.parse(birthday)));
+                toReturn.add(new Director(name,birthday));
             }
-        } catch (SQLException | ParseException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
@@ -67,21 +65,20 @@ public class DirectorDAO implements DAO<DirectorEntity>{
     }
 
     @Override
-    public List<DirectorEntity> getAll()
+    public List<Director> getAll()
     {
         ResultSet results;
-        List<DirectorEntity> toReturn = new ArrayList<>();
+        List<Director> toReturn = new ArrayList<>();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM actors"))
         {
             results = prepared.executeQuery();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = formatter.format(results.getDate(3));
-                toReturn.add(new DirectorEntity(name,formatter.parse(birthday)));
+                String birthday = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
+                toReturn.add(new Director(name,birthday));
             }
-        } catch (SQLException | ParseException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
@@ -89,7 +86,7 @@ public class DirectorDAO implements DAO<DirectorEntity>{
     }
 
     @Override
-    public void insert(int id,DirectorEntity newDirector)
+    public void insert(int id,Director newDirector)
     {
         try (PreparedStatement prepared = connection.prepareStatement("INSERT INTO directors VALUES(?, ?, ?)")) {
             prepared.setInt(1, id);
@@ -104,7 +101,7 @@ public class DirectorDAO implements DAO<DirectorEntity>{
     }
 
     @Override
-    public void update(int id,DirectorEntity newDirector)
+    public void update(int id,Director newDirector)
     {
         try(PreparedStatement prepared = connection.prepareStatement("UPDATE movies SET id=?, name=?, birthday=? WHERE id= ?"))
         {

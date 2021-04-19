@@ -85,6 +85,7 @@ public class InformationTool {
         Map<String, Object> input = new HashMap<>();
 
         input.put("title", "Data Information");
+//        System.out.println(formatter.format(new Date()));
         input.put("dateCreated",formatter.format(new Date()));
 
         EntityManager manager = managerFactory.createEntityManager();
