@@ -1,6 +1,6 @@
 package DAOClasses;
 
-import Classes.Genre;
+import JPAEntitites.GenreEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenreDAO implements DAO<Genre> {
+public class GenreDAO implements DAO<GenreEntity> {
     private final Connection connection;
 
     public GenreDAO(Connection connection)
@@ -18,10 +18,10 @@ public class GenreDAO implements DAO<Genre> {
     }
 
     @Override
-    public Genre getById(int id)
+    public GenreEntity getById(int id)
     {
         ResultSet results;
-        Genre toReturn = null;
+        GenreEntity toReturn = new GenreEntity();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM genres WHERe id=?"))
         {
             prepared.setInt(1,id);
@@ -29,7 +29,7 @@ public class GenreDAO implements DAO<Genre> {
             while(results.next())
             {
                 String name = results.getString(1);
-                toReturn = new Genre(name);
+                toReturn = new GenreEntity(name);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -39,10 +39,10 @@ public class GenreDAO implements DAO<Genre> {
     }
 
     @Override
-    public List<Genre> getByName(String genre)
+    public List<GenreEntity> getByName(String genre)
     {
         ResultSet results;
-        List<Genre> toReturn = new ArrayList<>();
+        List<GenreEntity> toReturn = new ArrayList<>();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM genres WHERE name="))
         {
             prepared.setString(1,genre);
@@ -50,7 +50,7 @@ public class GenreDAO implements DAO<Genre> {
             while(results.next())
             {
                 String name = results.getString(1);
-                toReturn.add(new Genre(name));
+                toReturn.add(new GenreEntity(name));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -60,17 +60,17 @@ public class GenreDAO implements DAO<Genre> {
     }
 
     @Override
-    public List<Genre> getAll()
+    public List<GenreEntity> getAll()
     {
         ResultSet results;
-        List<Genre> toReturn = new ArrayList<>();
+        List<GenreEntity> toReturn = new ArrayList<>();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM genres"))
         {
             results = prepared.executeQuery();
             while(results.next())
             {
                 String name = results.getString(1);
-                toReturn.add(new Genre(name));
+                toReturn.add(new GenreEntity(name));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -80,11 +80,11 @@ public class GenreDAO implements DAO<Genre> {
     }
 
     @Override
-    public void insert(int id,Genre newGenre)
+    public void insert(int id,GenreEntity newGenreEntity)
     {
         try (PreparedStatement prepared = connection.prepareStatement("INSERT INTO genres VALUES(?, ?)")) {
             prepared.setInt(1, id);
-            prepared.setString(2, newGenre.getName());
+            prepared.setString(2, newGenreEntity.getName());
 
             prepared.executeUpdate();
         } catch (SQLException throwables) {
@@ -93,7 +93,7 @@ public class GenreDAO implements DAO<Genre> {
     }
 
     @Override
-    public void update(int id,Genre genre)
+    public void update(int id,GenreEntity genre)
     {
         try(PreparedStatement prepared = connection.prepareStatement("UPDATE genres SET id=?, name=? WHERE id= ?"))
         {

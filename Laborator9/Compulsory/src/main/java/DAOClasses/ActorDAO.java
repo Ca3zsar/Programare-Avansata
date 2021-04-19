@@ -1,16 +1,17 @@
 package DAOClasses;
 
-import Classes.Actor;
+import JPAEntitites.ActorEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActorDAO implements DAO<Actor>{
+public class ActorDAO implements DAO<ActorEntity>{
     private final Connection connection;
 
     public ActorDAO(Connection connection)
@@ -19,22 +20,23 @@ public class ActorDAO implements DAO<Actor>{
     }
 
     @Override
-    public Actor getById(int id)
+    public ActorEntity getById(int id)
     {
         ResultSet results;
-        Actor toReturn = null;
+        ActorEntity toReturn = new ActorEntity();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM actors WHERE id=?"))
         {
             prepared.setInt(1,id);
             results = prepared.executeQuery();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = new SimpleDateFormat("dd-MM-yyyy").format(results.getDate(3));
+                String birthday = formatter.format(results.getDate(3));
 
-                toReturn = new Actor(name, birthday);
+                toReturn = new ActorEntity(name, formatter.parse(birthday));
             }
-        } catch (SQLException throwables) {
+        } catch (SQLException | ParseException throwables) {
             throwables.printStackTrace();
         }
 
@@ -42,22 +44,23 @@ public class ActorDAO implements DAO<Actor>{
     }
 
     @Override
-    public List<Actor> getByName(String actorName)
+    public List<ActorEntity> getByName(String actorName)
     {
         ResultSet results;
-        List<Actor> toReturn = new ArrayList<>();
+        List<ActorEntity> toReturn = new ArrayList<>();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM actors WHERE name=?"))
         {
             prepared.setString(1,actorName);
             results = prepared.executeQuery();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
+                String birthday = formatter.format(results.getDate(3));
 
-                toReturn.add(new Actor(name,birthday));
+                toReturn.add(new ActorEntity(name,formatter.parse(birthday)));
             }
-        } catch (SQLException throwables) {
+        } catch (SQLException | ParseException throwables) {
             throwables.printStackTrace();
         }
 
@@ -65,20 +68,21 @@ public class ActorDAO implements DAO<Actor>{
     }
 
     @Override
-    public List<Actor> getAll()
+    public List<ActorEntity> getAll()
     {
         ResultSet results;
-        List<Actor> toReturn = new ArrayList<>();
+        List<ActorEntity> toReturn = new ArrayList<>();
         try(PreparedStatement prepared = connection.prepareStatement("SELECT * FROM actors"))
         {
             results = prepared.executeQuery();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             while(results.next())
             {
                 String name = results.getString(2);
-                String birthday = new SimpleDateFormat("yyyy-MM-dd").format(results.getDate(3));
-                toReturn.add(new Actor(name,birthday));
+                String birthday = formatter.format(results.getDate(3));
+                toReturn.add(new ActorEntity(name,formatter.parse(birthday)));
             }
-        } catch (SQLException throwables) {
+        } catch (SQLException | ParseException throwables) {
             throwables.printStackTrace();
         }
 
@@ -86,7 +90,7 @@ public class ActorDAO implements DAO<Actor>{
     }
 
     @Override
-    public void insert(int id,Actor newActor)
+    public void insert(int id,ActorEntity newActor)
     {
         try (PreparedStatement prepared = connection.prepareStatement("INSERT INTO actors VALUES(?, ?, ?)")) {
             prepared.setInt(1, id);
@@ -101,7 +105,7 @@ public class ActorDAO implements DAO<Actor>{
     }
 
     @Override
-    public void update(int id,Actor newActor)
+    public void update(int id,ActorEntity newActor)
     {
         try(PreparedStatement prepared = connection.prepareStatement("UPDATE movies SET id=?, name=?, birthday=? WHERE id= ?"))
         {
