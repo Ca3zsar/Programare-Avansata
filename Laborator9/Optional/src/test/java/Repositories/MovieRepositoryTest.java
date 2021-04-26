@@ -32,8 +32,6 @@ public class MovieRepositoryTest {
 
         movieManager = new MovieRepository(Factory.getInstance().getEntityManagerFactory());
 
-
-
         movieManager.create(new MovieEntity("The Shawshank Redemption",format.parse("14-10-1994"),142,9.3));
         movieManager.create(new MovieEntity("The Godfather",format.parse("24-03-1972"),175,9.2));
         movieManager.create(new MovieEntity("The Dark Knight",format.parse("18-07-2008"),152,9.0));
