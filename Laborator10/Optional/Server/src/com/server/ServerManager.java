@@ -1,0 +1,138 @@
+package com.server;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
+public class ServerManager {
+    private final int port;
+    public static boolean isRunning = true;
+    private static List<ClientInfo> information;
+    private static List<String> messages;
+
+    public static ServerSocket serverSocket = null;
+    public ServerManager(int port)
+    {
+        this.port = port;
+        try {
+            serverSocket = new ServerSocket(this.port);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        information = new ArrayList<>();
+
+        readInfo();
+    }
+
+    public static void readInfo()
+    {
+        try {
+            FileInputStream file = new FileInputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Compulsory\\users.ser");
+            ObjectInputStream input;
+
+            if(file.available() > 0) {
+                input = new ObjectInputStream(file);
+                information = (List<ClientInfo>) input.readObject();
+            }
+
+
+            file.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int addClient(ClientInfo newClient)
+    {
+        for(ClientInfo client : information)
+        {
+            if(client.getName().equals(newClient.getName()))
+            {
+                return -1;
+            }
+        }
+        information.add(newClient);
+        return information.size();
+    }
+
+    public static void addMessage(String message)
+    {
+        if(messages == null){
+            messages = new ArrayList<>();
+        }
+        messages.add(message);
+    }
+
+    public static void addFriend(int index, List<String>friends)
+    {
+        List<String>toLookFor = information.get(index).getFriends();
+        for(String friend:friends)
+        {
+            if(!toLookFor.contains(friend)) {
+                information.get(index).addFriend(friend);
+            }
+        }
+    }
+
+    public static int checkClient(String name)
+    {
+        for(int i =0 ;i<information.size();i++)
+        {
+            if(information.get(i).getName().equals(name))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static void writeInfo()
+    {
+        try {
+            FileOutputStream file = new FileOutputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Compulsory\\users.ser");
+            ObjectOutputStream output = new ObjectOutputStream(file);
+
+            output.writeObject(information);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static List<String> getMessages()
+    {
+        return messages;
+    }
+
+    public void runServer()
+    {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
+        while(isRunning)
+        {
+            System.out.println("Waiting for a client to connect");
+
+            try {
+                Socket socket = serverSocket.accept();
+                executor.execute(new ClientThread(socket));
+
+//                new ClientThread(socket).start();
+            } catch (IOException exception) {
+                System.out.println("Server is now closing");
+            }
+        }
+        try {
+            serverSocket.close();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+        while (executor.getActiveCount() != 0);
+        executor.shutdownNow();
+        System.out.println("CEVA");
+        writeInfo();
+    }
+}
