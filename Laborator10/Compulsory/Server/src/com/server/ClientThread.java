@@ -25,12 +25,16 @@ public class ClientThread extends Thread {
             PrintWriter output = new PrintWriter(socket.getOutputStream(),true);
             while (isRunning) {
                 String request = input.readLine();
+                if(request == null)
+                {
+                    break;
+                }
 
                 List<String> tokens = Arrays.asList(request.split(" "));
                 System.out.println(tokens);
                 switch (tokens.get(0)) {
                     case "exit" -> isRunning = false;
-                    case "stop" -> {ServerManager.isRunning = false;isRunning=false;}
+                    case "stop" -> {ServerManager.isRunning = false;isRunning=false;ServerManager.serverSocket.close();}
                     case "register" -> {
                         if(this.loggedIn)
                         {
@@ -108,7 +112,7 @@ public class ClientThread extends Thread {
                 }
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.out.println("Client disconnected");
         } finally {
             try {
                 socket.close();

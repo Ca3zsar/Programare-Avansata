@@ -12,7 +12,7 @@ public class ServerManager {
     private static List<ClientInfo> information;
     private static List<String> messages;
 
-    ServerSocket serverSocket = null;
+    public static ServerSocket serverSocket = null;
     public ServerManager(int port)
     {
         this.port = port;
@@ -71,7 +71,7 @@ public class ServerManager {
         List<String>toLookFor = information.get(index).getFriends();
         for(String friend:friends)
         {
-            if(toLookFor.indexOf(friend) < 0) {
+            if(!toLookFor.contains(friend)) {
                 information.get(index).addFriend(friend);
             }
         }
@@ -117,7 +117,7 @@ public class ServerManager {
                 Socket socket = serverSocket.accept();
                 new ClientThread(socket).start();
             } catch (IOException exception) {
-                exception.printStackTrace();
+                System.out.println("Server is now closing");
             }
         }
         try {
