@@ -1,5 +1,15 @@
 package com.server;
 
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.util.mxCellRenderer;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 public class ServerManager {
     private final int port;
@@ -32,7 +43,7 @@ public class ServerManager {
     public static void readInfo()
     {
         try {
-            FileInputStream file = new FileInputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Compulsory\\users.ser");
+            FileInputStream file = new FileInputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Optional\\users.ser");
             ObjectInputStream input;
 
             if(file.available() > 0) {
@@ -60,24 +71,36 @@ public class ServerManager {
         return information.size();
     }
 
-    public static void addMessage(String message)
+    public static void addMessage(int index, String message)
     {
-        if(messages == null){
-            messages = new ArrayList<>();
+        for(ClientInfo friend:information.get(index).getFriends())
+        {
+            friend.addMessage(message);
         }
-        messages.add(message);
     }
 
-    public static void addFriend(int index, List<String>friends)
+    public static List<String>getMessages(int index)
     {
-        List<String>toLookFor = information.get(index).getFriends();
-        for(String friend:friends)
+        return information.get(index).getMessages();
+    }
+
+    public static void addFriend(int index, List<String>friendsNames)
+    {
+        List<ClientInfo>existentFriends = information.get(index).getFriends();
+        List<String>toLookFor = existentFriends.stream().map(ClientInfo::getName).collect(Collectors.toList());
+        for(String friend:friendsNames)
         {
             if(!toLookFor.contains(friend)) {
-                information.get(index).addFriend(friend);
+                int indexFriend = ServerManager.checkClient(friend);
+                if(indexFriend != -1) {
+                    information.get(index).addFriend(information.get(indexFriend-1));
+                }
             }
         }
     }
+
+
+
 
     public static int checkClient(String name)
     {
@@ -85,7 +108,7 @@ public class ServerManager {
         {
             if(information.get(i).getName().equals(name))
             {
-                return i;
+                return i+1;
             }
         }
         return -1;
@@ -94,7 +117,7 @@ public class ServerManager {
     public static void writeInfo()
     {
         try {
-            FileOutputStream file = new FileOutputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Compulsory\\users.ser");
+            FileOutputStream file = new FileOutputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Optional\\users.ser");
             ObjectOutputStream output = new ObjectOutputStream(file);
 
             output.writeObject(information);
@@ -102,11 +125,6 @@ public class ServerManager {
             e.printStackTrace();
         }
 
-    }
-
-    public static List<String> getMessages()
-    {
-        return messages;
     }
 
     public void runServer()
@@ -132,7 +150,7 @@ public class ServerManager {
         }
         while (executor.getActiveCount() != 0);
         executor.shutdownNow();
-        System.out.println("CEVA");
         writeInfo();
+        Representation.createRepresentation(information);
     }
 }

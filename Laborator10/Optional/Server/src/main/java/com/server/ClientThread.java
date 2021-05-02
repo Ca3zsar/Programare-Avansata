@@ -24,6 +24,10 @@ public class ClientThread extends Thread {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter output = new PrintWriter(socket.getOutputStream(),true);
             while (isRunning) {
+                if(loggedIn) {
+                    this.socket.setSoTimeout(60 * 1000);
+                }
+
                 String request = input.readLine();
                 if(request == null)
                 {
@@ -95,7 +99,7 @@ public class ClientThread extends Thread {
                             break;
                         }
 
-                        ServerManager.addMessage(String.join(" ",tokens.subList(1,tokens.size())));
+                        ServerManager.addMessage(clientIndex-1, String.join(" ",tokens.subList(1,tokens.size())));
                         output.println("Message has been sent");
                     }
 
@@ -106,13 +110,22 @@ public class ClientThread extends Thread {
                             break;
                         }
 
-                        String response = String.join("\n",ServerManager.getMessages());
+                        String response = String.join("\n",ServerManager.getMessages(clientIndex-1));
                         output.println(response);
+                    }
+                    default -> {
+                        output.println("Invalid command!");
+
                     }
                 }
             }
         } catch (IOException exception) {
             System.out.println("Client disconnected");
+            try {
+                new PrintWriter(socket.getOutputStream(),true).println("Timeout");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         } finally {
             try {
                 socket.close();
