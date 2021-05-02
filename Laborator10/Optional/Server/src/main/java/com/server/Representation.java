@@ -1,5 +1,6 @@
 package com.server;
 
+import com.jcraft.jsch.*;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
@@ -14,10 +15,7 @@ import org.jgrapht.graph.DefaultEdge;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +23,51 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Representation {
+    private static String username;
+    private static String password;
+    private static final String remoteHost = "174.138.110.11";
+    private static Session jschSession;
+
+    private static ChannelSftp setupJsch() throws JSchException {
+        JSch jsch = new JSch();
+//        jsch.setKnownHosts("known_hosts");
+
+        File file = new File("credentials.txt");
+
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(file));
+            username = bufferedReader.readLine();
+            password = bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        jschSession = jsch.getSession(username, remoteHost);
+
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        jschSession.setConfig(config);
+
+        jschSession.setPassword(password);
+        jschSession.connect();
+        return (ChannelSftp) jschSession.openChannel("sftp");
+    }
+
+    public static void uploadFile() throws JSchException, SftpException {
+        ChannelSftp channelSftp = setupJsch();
+        channelSftp.connect();
+        String localFile = "output.html";
+        String representationFile = "representation.png";
+        String remoteDir = "/var/www/21martie.live/";
+
+        channelSftp.put(localFile, remoteDir + "index.html");
+        channelSftp.put(representationFile,remoteDir +"representation.png");
+
+        channelSftp.exit();
+        jschSession.disconnect();
+    }
+
     public static void report() throws IOException, TemplateException, SQLException, ClassNotFoundException {
         Configuration configuration = new Configuration();
 
@@ -49,6 +92,12 @@ public class Representation {
             Desktop desktop = Desktop.getDesktop();
 
             desktop.open(entryFile);
+        }
+
+        try {
+            Representation.uploadFile();
+        } catch (JSchException | SftpException e) {
+            e.printStackTrace();
         }
     }
 

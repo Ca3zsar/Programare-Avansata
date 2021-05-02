@@ -17,5 +17,6 @@
     <orderEntry type="library" name="Maven: org.jheaps:jheaps:0.13" level="project" />
     <orderEntry type="library" name="Maven: com.github.vlsi.mxgraph:jgraphx:4.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.freemarker:freemarker:2.3.31" level="project" />
+    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
   </component>
 </module>
