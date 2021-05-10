@@ -12,7 +12,7 @@ public class ClientThread extends Thread {
     private final Socket socket;
     private boolean isRunning = true;
     private boolean loggedIn = false;
-    private int clientIndex;
+    private String clientName;
 
     public ClientThread(Socket newSocket) {
         this.socket = newSocket;
@@ -51,9 +51,9 @@ public class ClientThread extends Thread {
                             output.println("Invalid number of arguments");
                         }else{
                             String name = tokens.get(1);
-                            clientIndex = ServerManager.addClient(new ClientInfo(name));
+                            clientName = ServerManager.addClient(name);
 
-                            if(clientIndex == -1) {
+                            if(clientName == null) {
                                 output.println("There is another user with that name!");
                             }else{
                                 loggedIn = true;
@@ -72,8 +72,8 @@ public class ClientThread extends Thread {
                         {
                             output.println("Invalid number of arguments");
                         }else{
-                            clientIndex = ServerManager.checkClient(tokens.get(1));
-                            if(clientIndex == -1)
+                            clientName = ServerManager.checkClient(tokens.get(1));
+                            if(clientName == null)
                             {
                                 output.println("The user does not exist!");
                             }else{
@@ -89,7 +89,7 @@ public class ClientThread extends Thread {
                             break;
                         }
 
-                        ServerManager.addFriend(clientIndex-1,tokens.subList(1,tokens.size()));
+                        ServerManager.addFriend(clientName,tokens.subList(1,tokens.size()));
                         output.println("The users had been added as your friends");
                     }
                     case "send" -> {
@@ -99,7 +99,7 @@ public class ClientThread extends Thread {
                             break;
                         }
 
-                        ServerManager.addMessage(clientIndex-1, String.join(" ",tokens.subList(1,tokens.size())));
+                        ServerManager.addMessage(clientName, String.join(" ",tokens.subList(1,tokens.size())));
                         output.println("Message has been sent");
                     }
 
@@ -110,13 +110,10 @@ public class ClientThread extends Thread {
                             break;
                         }
 
-                        String response = String.join("\n",ServerManager.getMessages(clientIndex-1));
+                        String response = String.join("/",ServerManager.getMessages(clientName));
                         output.println(response);
                     }
-                    default -> {
-                        output.println("Invalid command!");
-
-                    }
+                    default -> output.println("Invalid command!");
                 }
             }
         } catch (IOException exception) {

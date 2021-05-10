@@ -1,15 +1,7 @@
 package com.server;
 
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.util.mxCellRenderer;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+import Database.*;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,118 +12,82 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 public class ServerManager {
-    private final int port;
     public static boolean isRunning = true;
-    private static List<ClientInfo> information;
-    private static List<String> messages;
-
     public static ServerSocket serverSocket = null;
-    public ServerManager(int port)
-    {
+    private final int port;
+
+    public ServerManager(int port) {
         this.port = port;
         try {
             serverSocket = new ServerSocket(this.port);
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-
-        information = new ArrayList<>();
-
-        readInfo();
     }
 
-    public static void readInfo()
-    {
-        try {
-            FileInputStream file = new FileInputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Optional\\users.ser");
-            ObjectInputStream input;
+    public static String addClient(String newClient) {
+        if (checkClient(newClient) == null) {
+            UserRepository userRepository = new UserRepository(Factory.getInstance().getEntityManagerFactory());
+            UserEntity user = new UserEntity();
+            user.setUsername(newClient);
+            userRepository.create(user);
+            return newClient;
+        }
+        return null;
+    }
 
-            if(file.available() > 0) {
-                input = new ObjectInputStream(file);
-                information = (List<ClientInfo>) input.readObject();
+    public static void addMessage(String sender, String message) {
+        FriendshipRepository friendshipRepository = new FriendshipRepository(Factory.getInstance().getEntityManagerFactory());
+        List<FriendshipEntity> friendshipEntities = friendshipRepository.findAllFriendships(sender);
+
+        for (FriendshipEntity friend : friendshipEntities) {
+            MessageRepository messageRepository = new MessageRepository(Factory.getInstance().getEntityManagerFactory());
+
+            MessageEntity messageEntity = new MessageEntity();
+            messageEntity.setSender(sender);
+            messageEntity.setReceiver(friend.getSecondUser());
+            messageEntity.setContent(message);
+
+            messageRepository.create(messageEntity);
+        }
+    }
+
+    public static List<String> getMessages(String receiver) {
+        MessageRepository messageRepository = new MessageRepository(Factory.getInstance().getEntityManagerFactory());
+        return messageRepository.findAllMessages(receiver).stream().map(MessageEntity::getContent).collect(Collectors.toList());
+    }
+
+    public static void addFriend(String firstUser, List<String> friendsNames) {
+        FriendshipRepository friendshipRepository = new FriendshipRepository(Factory.getInstance().getEntityManagerFactory());
+        List<String> existent = friendshipRepository.findAllFriendships(firstUser).stream().map(FriendshipEntity::getSecondUser).collect(Collectors.toList());
+
+        List<String> toLookFor = new ArrayList<>(friendsNames);
+        toLookFor.removeAll(existent);
+        for (String friend : toLookFor) {
+            String found = ServerManager.checkClient(friend);
+            if (found != null) {
+                FriendshipEntity friendshipEntity = new FriendshipEntity();
+                friendshipEntity.setFirstUser(firstUser);
+                friendshipEntity.setSecondUser(friend);
+                friendshipRepository.create(friendshipEntity);
             }
 
-
-            file.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
-    public static int addClient(ClientInfo newClient)
-    {
-        for(ClientInfo client : information)
-        {
-            if(client.getName().equals(newClient.getName()))
-            {
-                return -1;
-            }
-        }
-        information.add(newClient);
-        return information.size();
-    }
-
-    public static void addMessage(int index, String message)
-    {
-        for(ClientInfo friend:information.get(index).getFriends())
-        {
-            friend.addMessage(message);
+    public static String checkClient(String name) {
+        UserRepository userRepository = new UserRepository(Factory.getInstance().getEntityManagerFactory());
+        UserEntity found = userRepository.findByName(name);
+        if (found == null) {
+            return null;
+        } else {
+            return found.getUsername();
         }
     }
 
-    public static List<String>getMessages(int index)
-    {
-        return information.get(index).getMessages();
-    }
-
-    public static void addFriend(int index, List<String>friendsNames)
-    {
-        List<ClientInfo>existentFriends = information.get(index).getFriends();
-        List<String>toLookFor = existentFriends.stream().map(ClientInfo::getName).collect(Collectors.toList());
-        for(String friend:friendsNames)
-        {
-            if(!toLookFor.contains(friend)) {
-                int indexFriend = ServerManager.checkClient(friend);
-                if(indexFriend != -1) {
-                    information.get(index).addFriend(information.get(indexFriend-1));
-                }
-            }
-        }
-    }
-
-
-
-
-    public static int checkClient(String name)
-    {
-        for(int i =0 ;i<information.size();i++)
-        {
-            if(information.get(i).getName().equals(name))
-            {
-                return i+1;
-            }
-        }
-        return -1;
-    }
-
-    public static void writeInfo()
-    {
-        try {
-            FileOutputStream file = new FileOutputStream("C:\\Users\\cezar\\Desktop\\Sem2\\Programare-Avansata\\Laborator10\\Optional\\users.ser");
-            ObjectOutputStream output = new ObjectOutputStream(file);
-
-            output.writeObject(information);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void runServer()
-    {
+    public void runServer() {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
-        while(isRunning)
-        {
+        while (isRunning) {
             System.out.println("Waiting for a client to connect");
 
             try {
@@ -148,9 +104,7 @@ public class ServerManager {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-        while (executor.getActiveCount() != 0);
+        while (executor.getActiveCount() != 0) ;
         executor.shutdownNow();
-        writeInfo();
-        Representation.createRepresentation(information);
     }
 }
