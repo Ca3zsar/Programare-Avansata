@@ -1,6 +1,7 @@
 package com.lab12.testing;
 
-public class TestClass1 {
+@TestClass
+public class TestClass1 implements TestInterface{
     public int count;
     public String message;
     private Boolean tested;
@@ -10,6 +11,11 @@ public class TestClass1 {
         this.message = newMessage;
     }
 
+    @Override
+    public void printMessage(String message) {
+        System.out.println(this.getClass().getName() + " : " + message);
+    }
+
     public static void addition()
     {
         int a=3;
@@ -17,7 +23,7 @@ public class TestClass1 {
         System.out.println(a+b);
     }
 
-    @Test
+    @TestMethod
     public static void printingStuff()
     {
         System.out.println("this is a test");
