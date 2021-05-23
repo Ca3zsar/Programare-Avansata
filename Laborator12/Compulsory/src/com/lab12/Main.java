@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
-
-
     public static void main(String[] args) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -15,8 +13,8 @@ public class Main {
             Tester tested = new Tester(path);
 
             tested.showAllClasses();
+                tested.runMethods();
 
-            tested.runMethods();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
