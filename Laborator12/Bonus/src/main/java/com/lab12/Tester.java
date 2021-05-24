@@ -1,7 +1,11 @@
 package com.lab12;
 
+import com.lab12.testing.CorrectTest;
+import com.lab12.testing.SpeedTest;
 import com.lab12.testing.TestClass;
 import com.lab12.testing.TestMethod;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
 import javax.tools.*;
 import java.io.File;
@@ -164,6 +168,118 @@ public class Tester {
         }
     }
 
+    public void testMethod() {
+        if (loadedClass.isAnnotationPresent(TestClass.class) && Modifier.isPublic(loadedClass.getModifiers())) {
+            int passed = 0;
+            int failed = 0;
+
+            System.out.println("EXECUTING " + loadedClass.getName());
+
+            for (Method method : loadedClass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(SpeedTest.class) || method.isAnnotationPresent(CorrectTest.class)) {
+                    try {
+                        System.out.println("CALLED METHOD: " + method.getName());
+                        Class<?>[] parametersType = method.getParameterTypes();
+                        Object[] parameters = new Object[parametersType.length];
+                        int max = 50000;
+                        int min = 15000;
+                        for (int i = 0; i < parametersType.length; i++) {
+                            if (parametersType[i].equals(int.class)) {
+
+                                parameters[i] = (int)(Math.random()*(max-min+1)+min);
+                            } else if (parametersType[i].equals(String.class)) {
+                                parameters[i] = "i am trying";
+                            }
+                        }
+
+                        Method toInvoke = loadedClass.getDeclaredMethod(method.getName(), parametersType);
+
+                        if(method.isAnnotationPresent(SpeedTest.class)) {
+                            long start = System.currentTimeMillis();
+                            if (Modifier.isStatic(method.getModifiers())) {
+                                toInvoke.invoke(null, parameters);
+                            } else {
+                                toInvoke.invoke(loadedClass.newInstance(), parameters);
+                            }
+                            long stop = System.currentTimeMillis();
+
+                            if (stop - start < 50) {
+                                passed++;
+                                totalPassed++;
+                            } else {
+                                failed++;
+                                totalFailed++;
+                            }
+                        }else{
+                            Object response;
+                            if (Modifier.isStatic(method.getModifiers())) {
+                                response = toInvoke.invoke(null, parameters);
+                            } else {
+                                response = toInvoke.invoke(loadedClass.newInstance(), parameters);
+                            }
+
+                            if(response != null || toInvoke.getReturnType().getName().equals("void"))
+                            {
+                                passed++;
+                                totalPassed++;
+                            }else{
+                                failed++;
+                                totalFailed++;
+                            }
+                        }
+
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                        failed++;
+                        totalFailed++;
+                    } catch (NoSuchMethodException | InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            System.out.println("Passed : " + passed + " ; Failed : " + failed);
+        }
+    }
+
+    public void testMethods() {
+        testMethods(classURL, "");
+        System.out.println("Statistics : Passed - " + this.totalPassed + "; Failed - " + this.totalFailed);
+    }
+
+    public void testMethods(String startURL, String lastDirectory) {
+        if (startURL.endsWith(".jar")) {
+            try {
+                this.packageString = "";
+                JarFile jarFile = new JarFile(startURL);
+                Enumeration<?> enumeration = jarFile.entries();
+                while (enumeration.hasMoreElements()) {
+                    JarEntry entry = (JarEntry) enumeration.nextElement();
+                    if (entry.getName().endsWith(".class")) {
+                        String name = entry.getName().replace("/", ".");
+                        loadClass(name.replaceFirst("[.][^.]+$", ""), "");
+
+                        testMethod();
+                    }
+                }
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+        } else {
+            File root = new File(startURL);
+            for (File file : Objects.requireNonNull(root.listFiles())) {
+                if (file.isDirectory()) {
+                    testMethods(file.getAbsolutePath(), file.getName());
+                } else {
+                    if (file.getName().endsWith(".class")) {
+                        loadClass(file.getName().replaceFirst("[.][^.]+$", ""), lastDirectory);
+                        testMethod();
+                    }
+                }
+            }
+        }
+    }
+
     public void runMethods() {
         runMethods(classURL, "");
         System.out.println("Statistics : Passed - " + this.totalPassed + "; Failed - " + this.totalFailed);
@@ -203,22 +319,31 @@ public class Tester {
         }
     }
 
-    public void compile()
-    {
+    public void compile() {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new
                 DiagnosticCollector<>();
-        try( StandardJavaFileManager manager =
-                     compiler.getStandardFileManager( diagnosticCollector, null, null ) ) {
+        try (StandardJavaFileManager manager =
+                     compiler.getStandardFileManager(diagnosticCollector, null, null)) {
             File file =
                     new File(classURL);
             Iterable<? extends JavaFileObject> sources =
-                    manager.getJavaFileObjectsFromFiles( Arrays.
-                            asList( file ) );
+                    manager.getJavaFileObjectsFromFiles(Arrays.
+                            asList(file));
             JavaCompiler.CompilationTask task =
-                    compiler.getTask( null, manager, diagnosticCollector, null,
-                            null, sources );
+                    compiler.getTask(null, manager, diagnosticCollector, null,
+                            null, sources);
             task.call();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void getByteCode()
+    {
+        try {
+            ClassReader classReader = new ClassReader("loadedClass.getName()");
+            System.out.println(classReader.getClassName());
         } catch (IOException exception) {
             exception.printStackTrace();
         }

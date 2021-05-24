@@ -13,10 +13,10 @@ public class Main {
             Tester tested = new Tester(path);
 
             if(!path.endsWith(".java")) {
-                tested.showAllClasses();
-                tested.runMethods();
+                tested.testMethods();
             }else{
                 tested.compile();
+
             }
 
         } catch (IOException exception) {
